@@ -90,7 +90,7 @@ PRIMARY KEY (intID)
 -- https://mockaroo.com/8040d340
 CREATE TABLE movies (
 intID integer NOT NULL AUTO_INCREMENT, 
-dteCreated datetime NOT NULL, 
+dteCreated datetime , 
 strName varchar(200) NOT NULL, 
 strYear varchar(12)  NOT NULL,
 intPriceCategoryID integer NOT NULL, 
@@ -104,7 +104,7 @@ strtext varchar(1000)  NOT NULL,
 PRIMARY KEY (intID)
 );
 
--- 9 vilken skådis till vilken film (1.000)
+-- 8. vilken skådis till vilken film (1.000)
 -- https://mockaroo.com/1d1acc70
 CREATE TABLE movieActor (
 intMovieID integer NOT NULL, 
@@ -113,15 +113,14 @@ FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID ),
 FOREIGN KEY ( intActorID ) REFERENCES actors ( intID )
 );
 
--- 10. rental log :: what movie is / were in what place? (1.000 in a year)
+-- 9. rental log :: what movie is / were in what place? (1.000 in a year)
 -- https://mockaroo.com/b8cdc2d0
 CREATE TABLE rentalLog (
 intID integer NOT NULL AUTO_INCREMENT, 
-dteCreated datetime NOT NULL, 
-intMovieID integer NOT NULL, 
+dteCreated datetime , 
+intMovieID integer , 
 intCustomerID integer NOT NULL, 
 intStaffID integer NOT NULL, 
-dteReturn datetime, 
 dteReturned datetime, 
 PRIMARY KEY (intID),
 FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID ),
@@ -129,7 +128,17 @@ FOREIGN KEY ( intCustomerID ) REFERENCES customers ( intID ),
 FOREIGN KEY ( intStaffID ) REFERENCES staff ( intID )
 );
 
+-- 9. vilken film finns "inne"
+CREATE TABLE isNotInStore (
+intID integer NOT NULL AUTO_INCREMENT, 
+dteCreated datetime, 
+intMovieID integer NOT NULL, 
+intRentalLogID integer , 
+PRIMARY KEY (intID),
+FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID )
+);
 
+-- INSERT äkta fejt data --
 
 -- 1. prismodellen
 insert into priceCategory (intID, strName, intPrice) values (1, 'Cheap as... ', 0.99);
@@ -2030,1007 +2039,264 @@ insert into movieActor (intMovieID, intActorID) values (148, 194);
 
 -- 10. rentalLog (1.000)
 
+-- added dynamic // per date
 
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (1, '2018-03-01', 58, 188, 8, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (2, '2018-03-05', 106, 136, 2, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (3, '2018-01-31', 54, 95, 9, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (4, '2018-02-01', 182, 90, 9, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (5, '2018-02-12', 52, 185, 8, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (6, '2018-02-03', 10, 194, 8, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (7, '2018-01-23', 98, 53, 3, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (8, '2018-03-08', 108, 68, 2, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (9, '2018-01-10', 201, 116, 8, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (10, '2018-01-01', 245, 113, 4, '2018-01-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (11, '2018-03-17', 103, 121, 2, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (12, '2018-03-21', 288, 95, 1, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (13, '2018-01-13', 215, 136, 9, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (14, '2018-01-13', 190, 154, 3, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (15, '2018-01-08', 279, 175, 2, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (16, '2018-03-22', 296, 112, 8, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (17, '2018-01-22', 53, 101, 1, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (18, '2018-03-02', 207, 64, 10, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (19, '2018-03-20', 126, 139, 8, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (20, '2018-01-31', 219, 117, 8, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (21, '2018-03-23', 269, 127, 4, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (22, '2018-01-06', 272, 129, 1, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (23, '2018-03-25', 163, 171, 9, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (24, '2018-01-19', 57, 66, 7, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (25, '2018-02-10', 275, 121, 9, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (26, '2018-01-13', 190, 174, 1, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (27, '2018-03-03', 158, 65, 5, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (28, '2018-03-09', 192, 103, 7, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (29, '2018-01-22', 142, 177, 4, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (30, '2018-02-26', 114, 67, 2, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (31, '2018-02-10', 74, 46, 6, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (32, '2018-01-19', 57, 106, 9, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (33, '2018-02-24', 54, 144, 9, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (34, '2018-03-16', 257, 133, 10, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (35, '2018-03-05', 259, 199, 3, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (36, '2018-03-29', 166, 9, 8, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (37, '2018-03-20', 265, 16, 2, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (38, '2018-02-13', 42, 10, 7, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (39, '2018-02-25', 85, 174, 1, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (40, '2018-03-14', 13, 89, 2, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (41, '2018-02-10', 116, 76, 3, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (42, '2018-03-15', 14, 196, 5, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (43, '2018-01-07', 85, 90, 10, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (44, '2018-02-23', 277, 179, 10, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (45, '2018-03-24', 115, 12, 2, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (46, '2018-02-10', 245, 74, 2, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (47, '2018-02-26', 188, 35, 4, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (48, '2018-01-25', 191, 90, 8, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (49, '2018-02-19', 22, 186, 5, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (50, '2018-01-28', 97, 66, 5, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (51, '2018-02-03', 208, 195, 1, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (52, '2018-03-11', 231, 156, 10, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (53, '2018-03-30', 169, 168, 6, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (54, '2018-02-11', 236, 176, 7, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (55, '2018-02-07', 147, 87, 10, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (56, '2018-01-26', 225, 137, 2, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (57, '2018-01-22', 101, 146, 7, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (58, '2018-02-24', 93, 103, 1, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (59, '2018-02-14', 196, 31, 7, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (60, '2018-02-03', 154, 25, 9, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (61, '2018-01-03', 260, 103, 7, '2018-01-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (62, '2018-02-18', 238, 56, 4, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (63, '2018-01-12', 253, 105, 1, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (64, '2018-01-15', 128, 106, 6, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (65, '2018-02-01', 292, 183, 6, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (66, '2018-01-11', 85, 173, 10, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (67, '2018-02-11', 20, 40, 5, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (68, '2018-01-13', 111, 123, 4, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (69, '2018-03-07', 29, 13, 8, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (70, '2018-02-08', 152, 78, 4, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (71, '2018-01-17', 149, 131, 1, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (72, '2018-01-05', 15, 155, 7, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (73, '2018-03-28', 101, 5, 9, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (74, '2018-01-20', 190, 61, 6, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (75, '2018-02-09', 106, 184, 1, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (76, '2018-01-12', 40, 85, 6, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (77, '2018-03-30', 197, 50, 3, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (78, '2018-03-30', 18, 84, 7, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (79, '2018-01-14', 27, 2, 10, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (80, '2018-01-01', 165, 24, 6, '2018-01-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (81, '2018-02-25', 186, 119, 5, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (82, '2018-03-03', 104, 104, 3, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (83, '2018-01-13', 34, 58, 4, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (84, '2018-03-02', 137, 187, 8, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (85, '2018-03-02', 158, 177, 5, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (86, '2018-02-13', 85, 153, 3, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (87, '2018-03-30', 168, 2, 4, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (88, '2018-01-24', 87, 134, 6, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (89, '2018-03-12', 31, 38, 7, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (90, '2018-01-17', 216, 92, 6, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (91, '2018-02-19', 66, 68, 9, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (92, '2018-01-08', 154, 46, 3, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (93, '2018-03-26', 20, 21, 8, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (94, '2018-01-25', 36, 117, 5, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (95, '2018-02-03', 277, 135, 1, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (96, '2018-01-16', 128, 167, 7, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (97, '2018-03-09', 114, 183, 3, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (98, '2018-02-17', 82, 81, 9, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (99, '2018-01-22', 212, 197, 4, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (100, '2018-01-04', 112, 69, 10, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (101, '2018-03-22', 221, 144, 6, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (102, '2018-01-10', 201, 75, 4, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (103, '2018-02-22', 54, 147, 8, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (104, '2018-01-26', 224, 103, 1, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (105, '2018-02-02', 192, 87, 8, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (106, '2018-02-07', 102, 191, 10, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (107, '2018-02-02', 296, 18, 9, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (108, '2018-02-26', 248, 185, 10, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (109, '2018-02-25', 183, 107, 9, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (110, '2018-02-14', 21, 166, 3, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (111, '2018-01-11', 140, 144, 5, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (112, '2018-02-28', 224, 110, 1, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (113, '2018-02-22', 55, 25, 9, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (114, '2018-03-19', 94, 185, 9, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (115, '2018-03-16', 104, 95, 7, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (116, '2018-02-28', 155, 127, 3, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (117, '2018-03-16', 101, 96, 5, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (118, '2018-01-31', 32, 25, 2, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (119, '2018-03-11', 149, 35, 2, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (120, '2018-02-07', 295, 130, 6, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (121, '2018-01-23', 75, 135, 1, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (122, '2018-03-10', 189, 15, 8, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (123, '2018-03-11', 234, 44, 2, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (124, '2018-02-14', 97, 193, 7, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (125, '2018-01-26', 156, 149, 3, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (126, '2018-01-02', 259, 122, 4, '2018-01-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (127, '2018-03-30', 194, 20, 2, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (128, '2018-01-22', 219, 99, 10, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (129, '2018-02-24', 286, 186, 2, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (130, '2018-01-04', 229, 71, 6, '2018-01-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (131, '2018-03-01', 298, 65, 3, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (132, '2018-01-07', 223, 15, 10, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (133, '2018-02-27', 224, 142, 9, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (134, '2018-01-19', 108, 107, 4, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (135, '2018-02-06', 70, 45, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (136, '2018-01-09', 99, 146, 2, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (137, '2018-02-18', 252, 47, 7, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (138, '2018-02-12', 205, 42, 9, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (139, '2018-02-11', 269, 124, 5, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (140, '2018-01-27', 56, 69, 3, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (141, '2018-02-26', 103, 142, 5, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (142, '2018-01-17', 259, 25, 10, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (143, '2018-01-09', 289, 130, 1, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (144, '2018-01-30', 45, 174, 2, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (145, '2018-01-18', 27, 182, 3, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (146, '2018-02-14', 56, 116, 7, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (147, '2018-02-12', 246, 75, 1, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (148, '2018-03-14', 46, 193, 1, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (149, '2018-01-31', 147, 197, 9, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (150, '2018-01-30', 230, 2, 2, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (151, '2018-01-11', 242, 43, 2, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (152, '2018-02-16', 71, 89, 9, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (153, '2018-01-03', 252, 108, 2, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (154, '2018-01-29', 179, 197, 8, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (155, '2018-02-27', 55, 30, 9, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (156, '2018-01-08', 200, 131, 3, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (157, '2018-02-06', 285, 38, 7, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (158, '2018-02-11', 90, 43, 5, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (159, '2018-01-24', 251, 71, 10, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (160, '2018-03-19', 241, 119, 5, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (161, '2018-01-11', 92, 105, 8, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (162, '2018-03-09', 231, 139, 1, '2018-03-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (163, '2018-02-08', 58, 116, 10, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (164, '2018-02-03', 48, 167, 6, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (165, '2018-02-12', 30, 66, 5, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (166, '2018-01-14', 3, 82, 3, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (167, '2018-02-02', 8, 186, 9, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (168, '2018-03-26', 284, 31, 9, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (169, '2018-01-10', 249, 107, 2, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (170, '2018-02-08', 80, 12, 3, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (171, '2018-01-12', 245, 144, 1, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (172, '2018-01-16', 216, 79, 6, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (173, '2018-02-28', 24, 162, 4, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (174, '2018-01-13', 75, 54, 9, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (175, '2018-03-21', 214, 165, 10, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (176, '2018-01-25', 283, 14, 2, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (177, '2018-02-10', 44, 83, 5, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (178, '2018-02-18', 39, 122, 8, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (179, '2018-01-26', 110, 182, 5, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (180, '2018-01-28', 215, 148, 2, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (181, '2018-01-06', 139, 135, 7, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (182, '2018-02-20', 80, 182, 9, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (183, '2018-02-20', 259, 83, 9, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (184, '2018-02-15', 18, 133, 8, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (185, '2018-02-08', 297, 184, 9, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (186, '2018-03-15', 75, 113, 2, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (187, '2018-01-23', 170, 114, 3, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (188, '2018-01-16', 260, 43, 5, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (189, '2018-03-02', 53, 74, 2, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (190, '2018-01-22', 97, 121, 2, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (191, '2018-01-07', 36, 43, 8, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (192, '2018-02-01', 214, 128, 6, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (193, '2018-01-14', 170, 125, 9, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (194, '2018-03-04', 43, 169, 7, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (195, '2018-03-26', 15, 133, 1, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (196, '2018-02-25', 93, 51, 9, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (197, '2018-03-22', 61, 179, 1, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (198, '2018-02-22', 229, 171, 10, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (199, '2018-03-03', 158, 180, 4, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (200, '2018-01-18', 152, 106, 4, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (201, '2018-02-28', 136, 118, 7, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (202, '2018-03-03', 54, 134, 6, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (203, '2018-01-12', 8, 112, 2, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (204, '2018-03-18', 239, 55, 10, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (205, '2018-02-25', 230, 124, 4, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (206, '2018-02-24', 185, 180, 8, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (207, '2018-01-28', 55, 80, 5, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (208, '2018-01-21', 280, 81, 7, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (209, '2018-02-12', 208, 127, 4, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (210, '2018-03-23', 202, 129, 9, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (211, '2018-03-02', 228, 112, 7, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (212, '2018-01-24', 37, 15, 5, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (213, '2018-01-07', 1, 104, 6, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (214, '2018-03-09', 40, 155, 6, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (215, '2018-03-14', 260, 80, 9, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (216, '2018-03-22', 101, 158, 7, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (217, '2018-03-03', 201, 159, 7, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (218, '2018-03-11', 143, 112, 4, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (219, '2018-01-24', 98, 149, 3, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (220, '2018-02-18', 77, 62, 8, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (221, '2018-03-15', 27, 146, 7, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (222, '2018-01-31', 182, 155, 5, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (223, '2018-02-23', 74, 181, 4, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (224, '2018-01-29', 60, 134, 8, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (225, '2018-02-06', 198, 47, 2, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (226, '2018-03-11', 21, 177, 10, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (227, '2018-02-05', 196, 34, 7, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (228, '2018-02-19', 77, 55, 1, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (229, '2018-01-04', 148, 146, 6, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (230, '2018-02-25', 159, 160, 3, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (231, '2018-03-16', 47, 127, 4, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (232, '2018-02-05', 126, 120, 1, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (233, '2018-03-15', 219, 112, 1, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (234, '2018-03-04', 38, 169, 4, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (235, '2018-02-07', 122, 139, 4, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (236, '2018-02-06', 272, 40, 8, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (237, '2018-03-13', 31, 174, 7, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (238, '2018-01-12', 87, 18, 10, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (239, '2018-02-11', 222, 33, 1, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (240, '2018-03-28', 244, 104, 2, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (241, '2018-01-01', 90, 3, 1, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (242, '2018-01-15', 240, 7, 9, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (243, '2018-03-26', 293, 95, 4, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (244, '2018-01-05', 270, 144, 7, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (245, '2018-01-15', 89, 64, 6, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (246, '2018-01-01', 5, 93, 2, '2018-01-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (247, '2018-02-10', 187, 167, 4, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (248, '2018-03-17', 41, 52, 6, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (249, '2018-02-11', 55, 94, 6, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (250, '2018-02-07', 185, 53, 9, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (251, '2018-01-05', 179, 64, 3, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (252, '2018-03-24', 40, 156, 10, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (253, '2018-03-13', 34, 74, 1, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (254, '2018-02-16', 47, 199, 8, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (255, '2018-03-01', 82, 163, 9, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (256, '2018-02-02', 104, 97, 6, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (257, '2018-03-07', 193, 30, 5, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (258, '2018-01-07', 56, 129, 8, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (259, '2018-01-18', 222, 1, 5, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (260, '2018-02-17', 124, 127, 7, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (261, '2018-03-15', 103, 76, 1, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (262, '2018-03-02', 20, 185, 1, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (263, '2018-01-20', 296, 120, 4, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (264, '2018-03-30', 200, 184, 6, '2018-04-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (265, '2018-01-24', 286, 14, 1, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (266, '2018-02-01', 229, 3, 8, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (267, '2018-03-22', 21, 21, 8, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (268, '2018-01-05', 38, 177, 8, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (269, '2018-02-21', 39, 125, 7, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (270, '2018-03-18', 16, 30, 5, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (271, '2018-01-27', 13, 109, 5, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (272, '2018-02-02', 185, 153, 3, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (273, '2018-01-30', 6, 72, 6, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (274, '2018-01-05', 276, 118, 4, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (275, '2018-03-28', 294, 38, 7, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (276, '2018-02-18', 61, 61, 5, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (277, '2018-01-22', 70, 143, 1, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (278, '2018-03-18', 116, 185, 5, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (279, '2018-02-24', 263, 31, 10, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (280, '2018-02-16', 211, 21, 4, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (281, '2018-02-02', 38, 105, 9, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (282, '2018-02-21', 104, 82, 9, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (283, '2018-03-20', 141, 167, 10, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (284, '2018-01-05', 106, 130, 8, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (285, '2018-02-15', 273, 82, 10, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (286, '2018-03-18', 188, 101, 9, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (287, '2018-02-07', 190, 56, 4, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (288, '2018-03-02', 212, 152, 5, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (289, '2018-03-24', 42, 10, 9, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (290, '2018-02-12', 213, 104, 8, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (291, '2018-01-01', 283, 37, 3, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (292, '2018-02-10', 110, 184, 2, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (293, '2018-01-28', 124, 36, 2, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (294, '2018-03-09', 178, 51, 6, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (295, '2018-01-24', 257, 148, 8, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (296, '2018-01-24', 63, 29, 6, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (297, '2018-01-23', 40, 15, 5, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (298, '2018-01-22', 118, 198, 3, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (299, '2018-01-15', 245, 189, 4, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (300, '2018-01-04', 29, 38, 6, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (301, '2018-01-04', 155, 107, 5, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (302, '2018-01-11', 40, 139, 8, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (303, '2018-02-23', 82, 36, 8, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (304, '2018-01-20', 139, 50, 8, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (305, '2018-02-14', 112, 144, 8, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (306, '2018-03-12', 248, 112, 10, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (307, '2018-02-18', 270, 134, 9, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (308, '2018-02-26', 148, 136, 1, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (309, '2018-01-18', 166, 126, 7, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (310, '2018-01-02', 36, 97, 6, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (311, '2018-01-27', 80, 112, 1, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (312, '2018-01-18', 298, 99, 2, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (313, '2018-03-23', 163, 89, 4, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (314, '2018-02-19', 205, 183, 7, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (315, '2018-02-06', 81, 181, 2, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (316, '2018-02-21', 35, 86, 8, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (317, '2018-02-27', 8, 30, 2, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (318, '2018-01-26', 196, 37, 5, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (319, '2018-03-18', 162, 102, 8, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (320, '2018-01-12', 212, 143, 7, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (321, '2018-03-16', 172, 121, 8, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (322, '2018-02-04', 5, 113, 2, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (323, '2018-01-28', 242, 89, 10, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (324, '2018-03-08', 90, 109, 2, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (325, '2018-03-02', 213, 176, 10, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (326, '2018-01-04', 221, 188, 9, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (327, '2018-03-11', 95, 107, 10, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (328, '2018-01-09', 60, 54, 7, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (329, '2018-03-04', 299, 193, 8, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (330, '2018-01-08', 107, 138, 2, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (331, '2018-03-08', 208, 138, 5, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (332, '2018-02-24', 73, 63, 6, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (333, '2018-03-09', 22, 161, 8, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (334, '2018-01-23', 247, 145, 10, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (335, '2018-03-10', 136, 121, 8, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (336, '2018-01-13', 262, 183, 6, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (337, '2018-03-15', 11, 15, 9, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (338, '2018-01-28', 99, 127, 2, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (339, '2018-02-20', 124, 52, 4, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (340, '2018-03-09', 246, 115, 4, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (341, '2018-02-15', 150, 188, 9, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (342, '2018-03-05', 48, 26, 2, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (343, '2018-02-27', 87, 116, 5, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (344, '2018-01-26', 140, 165, 3, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (345, '2018-02-23', 206, 24, 8, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (346, '2018-03-19', 95, 47, 10, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (347, '2018-02-23', 85, 187, 3, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (348, '2018-01-16', 188, 121, 8, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (349, '2018-03-20', 29, 113, 3, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (350, '2018-02-28', 120, 187, 10, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (351, '2018-03-30', 41, 28, 8, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (352, '2018-02-03', 141, 132, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (353, '2018-01-11', 286, 116, 7, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (354, '2018-01-16', 266, 199, 5, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (355, '2018-03-18', 209, 132, 10, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (356, '2018-01-25', 272, 177, 6, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (357, '2018-02-02', 93, 46, 1, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (358, '2018-01-08', 143, 55, 6, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (359, '2018-02-14', 208, 194, 2, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (360, '2018-01-07', 126, 200, 8, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (361, '2018-03-14', 36, 168, 7, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (362, '2018-02-03', 103, 63, 8, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (363, '2018-02-09', 133, 119, 7, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (364, '2018-02-26', 79, 166, 5, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (365, '2018-02-04', 257, 22, 9, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (366, '2018-01-28', 159, 186, 7, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (367, '2018-02-17', 197, 136, 5, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (368, '2018-01-04', 104, 55, 1, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (369, '2018-02-20', 87, 185, 3, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (370, '2018-01-31', 165, 11, 6, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (371, '2018-01-22', 59, 20, 10, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (372, '2018-03-17', 160, 123, 4, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (373, '2018-01-16', 58, 179, 9, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (374, '2018-01-28', 13, 22, 10, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (375, '2018-01-29', 278, 184, 1, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (376, '2018-02-26', 239, 140, 5, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (377, '2018-03-05', 114, 39, 10, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (378, '2018-01-03', 8, 49, 6, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (379, '2018-02-27', 36, 151, 8, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (380, '2018-01-11', 221, 75, 8, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (381, '2018-02-25', 163, 119, 8, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (382, '2018-03-15', 192, 29, 9, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (383, '2018-03-30', 65, 154, 7, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (384, '2018-02-08', 95, 170, 7, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (385, '2018-03-17', 236, 64, 3, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (386, '2018-02-19', 18, 103, 2, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (387, '2018-02-26', 185, 64, 3, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (388, '2018-03-23', 184, 186, 10, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (389, '2018-01-22', 12, 3, 3, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (390, '2018-03-30', 61, 119, 8, '2018-04-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (391, '2018-02-03', 220, 17, 4, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (392, '2018-03-20', 42, 50, 1, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (393, '2018-03-09', 159, 44, 9, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (394, '2018-01-13', 148, 117, 7, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (395, '2018-01-06', 161, 191, 9, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (396, '2018-03-19', 62, 128, 5, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (397, '2018-03-23', 263, 131, 8, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (398, '2018-02-09', 53, 48, 10, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (399, '2018-01-04', 147, 180, 4, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (400, '2018-02-02', 58, 95, 4, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (401, '2018-01-04', 125, 75, 4, '2018-01-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (402, '2018-03-25', 292, 161, 3, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (403, '2018-03-12', 26, 66, 9, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (404, '2018-02-19', 210, 184, 10, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (405, '2018-01-08', 172, 180, 7, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (406, '2018-01-28', 141, 80, 10, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (407, '2018-03-12', 201, 73, 9, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (408, '2018-01-29', 251, 109, 3, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (409, '2018-02-17', 166, 199, 2, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (410, '2018-02-09', 8, 128, 8, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (411, '2018-03-09', 197, 40, 2, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (412, '2018-03-01', 292, 2, 4, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (413, '2018-02-09', 219, 140, 4, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (414, '2018-01-02', 114, 66, 8, '2018-01-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (415, '2018-02-28', 175, 55, 1, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (416, '2018-01-19', 159, 127, 5, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (417, '2018-03-20', 278, 5, 6, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (418, '2018-03-24', 193, 14, 5, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (419, '2018-02-28', 186, 117, 9, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (420, '2018-02-03', 5, 98, 2, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (421, '2018-03-09', 181, 115, 6, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (422, '2018-03-18', 137, 90, 5, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (423, '2018-03-04', 168, 40, 3, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (424, '2018-02-27', 278, 157, 6, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (425, '2018-01-20', 199, 123, 8, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (426, '2018-01-17', 25, 97, 10, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (427, '2018-01-06', 143, 136, 6, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (428, '2018-03-26', 13, 120, 1, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (429, '2018-02-07', 268, 152, 2, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (430, '2018-03-12', 196, 38, 6, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (431, '2018-03-29', 269, 49, 6, '2018-04-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (432, '2018-02-07', 22, 73, 9, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (433, '2018-03-26', 47, 95, 9, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (434, '2018-03-19', 282, 127, 8, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (435, '2018-02-08', 257, 41, 8, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (436, '2018-01-10', 209, 87, 4, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (437, '2018-01-20', 300, 42, 6, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (438, '2018-02-14', 78, 88, 10, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (439, '2018-01-28', 24, 81, 8, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (440, '2018-01-15', 239, 12, 5, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (441, '2018-02-10', 280, 5, 6, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (442, '2018-01-30', 294, 94, 6, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (443, '2018-03-13', 262, 6, 7, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (444, '2018-03-07', 241, 116, 8, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (445, '2018-02-02', 65, 131, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (446, '2018-03-29', 297, 154, 6, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (447, '2018-01-30', 227, 97, 8, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (448, '2018-01-19', 210, 162, 3, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (449, '2018-03-09', 82, 132, 5, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (450, '2018-03-12', 247, 70, 7, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (451, '2018-02-25', 14, 93, 10, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (452, '2018-01-24', 113, 65, 4, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (453, '2018-03-07', 240, 112, 4, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (454, '2018-01-04', 88, 94, 8, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (455, '2018-01-09', 284, 78, 4, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (456, '2018-03-25', 45, 200, 7, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (457, '2018-02-12', 156, 14, 9, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (458, '2018-03-02', 159, 152, 10, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (459, '2018-02-27', 45, 184, 9, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (460, '2018-01-16', 199, 55, 3, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (461, '2018-02-14', 261, 197, 6, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (462, '2018-03-12', 37, 17, 2, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (463, '2018-01-15', 196, 70, 7, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (464, '2018-01-03', 1, 190, 10, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (465, '2018-01-22', 208, 77, 2, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (466, '2018-02-12', 297, 44, 2, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (467, '2018-03-26', 223, 29, 9, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (468, '2018-02-03', 221, 56, 10, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (469, '2018-02-26', 213, 188, 10, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (470, '2018-03-16', 117, 175, 3, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (471, '2018-01-15', 101, 180, 3, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (472, '2018-01-08', 82, 35, 7, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (473, '2018-01-17', 211, 13, 9, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (474, '2018-03-01', 57, 17, 4, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (475, '2018-01-01', 289, 88, 9, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (476, '2018-01-27', 93, 63, 4, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (477, '2018-03-21', 89, 161, 5, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (478, '2018-02-10', 59, 75, 7, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (479, '2018-02-01', 87, 165, 2, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (480, '2018-02-16', 211, 100, 3, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (481, '2018-01-25', 44, 154, 10, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (482, '2018-03-09', 20, 56, 9, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (483, '2018-03-09', 272, 184, 7, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (484, '2018-01-03', 217, 195, 6, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (485, '2018-02-28', 279, 45, 9, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (486, '2018-02-04', 111, 152, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (487, '2018-01-28', 248, 111, 9, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (488, '2018-03-20', 174, 91, 1, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (489, '2018-01-19', 25, 198, 5, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (490, '2018-02-15', 59, 36, 10, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (491, '2018-02-16', 89, 167, 10, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (492, '2018-01-24', 76, 27, 10, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (493, '2018-01-10', 40, 91, 4, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (494, '2018-02-12', 13, 13, 4, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (495, '2018-03-24', 280, 190, 1, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (496, '2018-03-17', 172, 114, 2, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (497, '2018-01-18', 111, 29, 4, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (498, '2018-02-12', 245, 127, 6, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (499, '2018-03-26', 271, 128, 7, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (500, '2018-02-08', 217, 78, 1, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (501, '2018-03-26', 260, 60, 7, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (502, '2018-01-27', 238, 136, 7, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (503, '2018-03-23', 27, 175, 3, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (504, '2018-03-23', 204, 59, 8, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (505, '2018-02-17', 226, 85, 10, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (506, '2018-02-12', 117, 159, 4, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (507, '2018-01-03', 216, 34, 3, '2018-01-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (508, '2018-02-21', 168, 54, 10, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (509, '2018-02-09', 190, 146, 3, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (510, '2018-01-08', 38, 108, 10, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (511, '2018-03-26', 151, 11, 7, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (512, '2018-03-11', 97, 57, 10, '2018-03-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (513, '2018-01-25', 43, 132, 9, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (514, '2018-02-06', 271, 36, 2, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (515, '2018-02-03', 270, 101, 6, '2018-02-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (516, '2018-03-29', 223, 149, 2, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (517, '2018-03-22', 104, 138, 2, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (518, '2018-02-03', 129, 82, 2, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (519, '2018-02-06', 143, 104, 10, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (520, '2018-03-18', 205, 38, 4, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (521, '2018-03-06', 194, 43, 1, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (522, '2018-02-16', 165, 10, 9, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (523, '2018-03-25', 247, 28, 7, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (524, '2018-01-08', 133, 10, 7, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (525, '2018-03-10', 229, 176, 8, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (526, '2018-01-02', 259, 117, 9, '2018-01-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (527, '2018-02-08', 256, 115, 9, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (528, '2018-03-04', 162, 180, 1, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (529, '2018-02-25', 118, 131, 6, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (530, '2018-02-28', 293, 59, 8, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (531, '2018-01-07', 19, 29, 9, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (532, '2018-01-12', 279, 51, 3, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (533, '2018-02-03', 153, 191, 3, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (534, '2018-02-24', 263, 152, 10, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (535, '2018-02-14', 16, 69, 3, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (536, '2018-01-10', 47, 173, 7, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (537, '2018-03-26', 101, 10, 10, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (538, '2018-01-06', 214, 38, 7, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (539, '2018-01-04', 274, 51, 3, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (540, '2018-01-06', 201, 175, 7, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (541, '2018-01-25', 121, 57, 6, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (542, '2018-02-06', 41, 189, 1, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (543, '2018-02-23', 12, 147, 2, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (544, '2018-03-21', 124, 143, 6, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (545, '2018-01-15', 223, 127, 9, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (546, '2018-03-18', 26, 134, 4, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (547, '2018-02-25', 122, 89, 8, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (548, '2018-03-14', 117, 115, 4, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (549, '2018-03-18', 201, 145, 3, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (550, '2018-02-21', 55, 154, 2, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (551, '2018-03-08', 87, 98, 6, '2018-03-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (552, '2018-02-20', 215, 10, 1, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (553, '2018-03-19', 99, 160, 3, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (554, '2018-02-25', 232, 26, 1, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (555, '2018-03-20', 4, 161, 8, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (556, '2018-02-01', 76, 11, 6, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (557, '2018-03-01', 279, 12, 1, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (558, '2018-02-11', 106, 37, 8, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (559, '2018-02-13', 295, 148, 4, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (560, '2018-01-14', 139, 105, 1, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (561, '2018-01-25', 218, 1, 7, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (562, '2018-01-05', 289, 30, 6, '2018-01-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (563, '2018-01-16', 209, 98, 9, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (564, '2018-03-09', 22, 44, 2, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (565, '2018-01-17', 256, 32, 4, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (566, '2018-02-03', 183, 69, 8, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (567, '2018-01-22', 235, 178, 8, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (568, '2018-02-22', 162, 193, 8, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (569, '2018-02-15', 225, 52, 4, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (570, '2018-02-01', 7, 35, 7, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (571, '2018-02-12', 247, 120, 6, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (572, '2018-03-26', 77, 187, 8, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (573, '2018-03-22', 28, 44, 3, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (574, '2018-02-16', 153, 140, 7, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (575, '2018-03-07', 36, 44, 6, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (576, '2018-01-30', 277, 175, 7, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (577, '2018-01-29', 244, 127, 9, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (578, '2018-01-05', 109, 132, 8, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (579, '2018-02-02', 142, 96, 6, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (580, '2018-03-10', 23, 168, 5, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (581, '2018-03-04', 100, 49, 4, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (582, '2018-03-14', 187, 191, 7, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (583, '2018-02-22', 275, 86, 4, '2018-02-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (584, '2018-03-17', 214, 146, 9, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (585, '2018-02-27', 146, 144, 5, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (586, '2018-01-26', 14, 132, 9, '2018-01-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (587, '2018-03-07', 288, 6, 5, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (588, '2018-03-26', 220, 198, 4, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (589, '2018-01-10', 213, 171, 4, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (590, '2018-03-29', 68, 47, 10, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (591, '2018-01-02', 134, 39, 3, '2018-01-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (592, '2018-01-20', 37, 121, 4, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (593, '2018-01-03', 179, 27, 4, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (594, '2018-02-23', 165, 167, 9, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (595, '2018-02-09', 260, 43, 10, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (596, '2018-03-11', 110, 38, 1, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (597, '2018-03-05', 290, 147, 9, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (598, '2018-02-04', 299, 75, 2, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (599, '2018-03-24', 190, 162, 1, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (600, '2018-02-21', 69, 92, 6, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (601, '2018-01-12', 42, 76, 3, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (602, '2018-03-10', 88, 147, 2, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (603, '2018-03-22', 78, 170, 4, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (604, '2018-02-28', 279, 142, 5, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (605, '2018-01-13', 227, 27, 6, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (606, '2018-01-26', 186, 122, 10, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (607, '2018-01-27', 4, 156, 6, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (608, '2018-02-09', 221, 56, 5, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (609, '2018-02-23', 123, 122, 1, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (610, '2018-02-19', 296, 108, 9, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (611, '2018-02-13', 105, 170, 5, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (612, '2018-03-25', 59, 145, 1, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (613, '2018-02-28', 88, 142, 9, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (614, '2018-01-23', 70, 171, 9, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (615, '2018-03-13', 264, 99, 3, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (616, '2018-03-19', 52, 183, 4, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (617, '2018-03-02', 111, 17, 1, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (618, '2018-03-23', 19, 105, 3, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (619, '2018-03-27', 30, 85, 3, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (620, '2018-02-19', 271, 136, 2, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (621, '2018-03-14', 145, 33, 1, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (622, '2018-01-31', 19, 113, 5, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (623, '2018-03-07', 220, 180, 6, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (624, '2018-03-21', 97, 185, 4, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (625, '2018-01-29', 83, 71, 7, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (626, '2018-03-07', 168, 185, 3, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (627, '2018-03-16', 286, 100, 1, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (628, '2018-03-13', 77, 52, 9, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (629, '2018-03-11', 224, 66, 1, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (630, '2018-03-02', 106, 123, 5, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (631, '2018-02-14', 42, 197, 3, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (632, '2018-01-10', 24, 49, 9, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (633, '2018-02-15', 254, 98, 3, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (634, '2018-03-25', 124, 123, 8, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (635, '2018-01-30', 23, 58, 10, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (636, '2018-03-16', 292, 173, 2, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (637, '2018-03-02', 157, 26, 5, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (638, '2018-02-10', 40, 101, 9, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (639, '2018-02-28', 221, 122, 9, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (640, '2018-02-06', 8, 9, 4, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (641, '2018-01-08', 62, 188, 7, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (642, '2018-03-29', 107, 186, 3, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (643, '2018-03-04', 297, 107, 9, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (644, '2018-02-21', 277, 128, 1, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (645, '2018-02-20', 56, 24, 7, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (646, '2018-02-24', 262, 19, 6, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (647, '2018-03-03', 41, 158, 2, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (648, '2018-01-29', 11, 188, 8, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (649, '2018-02-05', 272, 4, 9, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (650, '2018-02-06', 68, 167, 6, '2018-02-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (651, '2018-01-18', 7, 1, 1, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (652, '2018-03-06', 77, 8, 4, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (653, '2018-03-16', 71, 79, 8, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (654, '2018-01-22', 49, 59, 3, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (655, '2018-01-01', 63, 95, 3, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (656, '2018-02-02', 5, 12, 8, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (657, '2018-01-26', 93, 61, 4, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (658, '2018-01-07', 250, 71, 9, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (659, '2018-02-02', 49, 24, 8, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (660, '2018-02-11', 30, 141, 8, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (661, '2018-01-04', 150, 95, 10, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (662, '2018-02-26', 250, 176, 1, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (663, '2018-03-29', 208, 128, 4, '2018-04-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (664, '2018-01-27', 252, 40, 10, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (665, '2018-02-18', 223, 31, 3, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (666, '2018-02-25', 221, 10, 2, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (667, '2018-02-01', 285, 89, 4, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (668, '2018-03-17', 235, 36, 8, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (669, '2018-03-14', 239, 178, 8, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (670, '2018-01-19', 87, 170, 3, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (671, '2018-03-08', 68, 40, 6, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (672, '2018-02-13', 4, 160, 3, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (673, '2018-01-12', 180, 168, 10, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (674, '2018-03-11', 246, 55, 2, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (675, '2018-02-10', 215, 191, 1, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (676, '2018-01-10', 8, 166, 3, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (677, '2018-03-26', 177, 88, 4, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (678, '2018-03-12', 182, 11, 7, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (679, '2018-01-08', 240, 104, 10, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (680, '2018-03-03', 140, 5, 7, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (681, '2018-03-01', 228, 52, 7, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (682, '2018-01-26', 61, 180, 2, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (683, '2018-02-16', 153, 124, 8, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (684, '2018-01-14', 198, 185, 1, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (685, '2018-01-02', 163, 179, 9, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (686, '2018-03-03', 172, 18, 9, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (687, '2018-03-01', 153, 196, 6, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (688, '2018-03-13', 266, 55, 3, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (689, '2018-02-17', 10, 16, 2, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (690, '2018-02-21', 286, 22, 10, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (691, '2018-03-15', 289, 29, 2, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (692, '2018-02-18', 82, 19, 1, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (693, '2018-01-14', 50, 126, 3, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (694, '2018-02-17', 227, 136, 2, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (695, '2018-01-03', 209, 147, 7, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (696, '2018-02-05', 249, 2, 1, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (697, '2018-02-14', 251, 150, 5, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (698, '2018-03-27', 45, 123, 3, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (699, '2018-03-09', 219, 27, 10, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (700, '2018-03-04', 90, 164, 9, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (701, '2018-03-22', 237, 126, 3, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (702, '2018-01-11', 282, 146, 3, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (703, '2018-01-06', 281, 123, 10, '2018-01-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (704, '2018-02-11', 266, 33, 10, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (705, '2018-03-17', 188, 88, 10, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (706, '2018-02-20', 79, 60, 1, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (707, '2018-02-21', 152, 79, 8, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (708, '2018-02-20', 157, 176, 1, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (709, '2018-03-14', 28, 157, 10, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (710, '2018-01-24', 213, 188, 10, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (711, '2018-03-04', 202, 89, 7, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (712, '2018-02-11', 49, 27, 5, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (713, '2018-01-31', 113, 173, 9, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (714, '2018-01-24', 160, 50, 2, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (715, '2018-03-06', 206, 85, 8, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (716, '2018-03-26', 176, 43, 8, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (717, '2018-02-13', 70, 19, 3, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (718, '2018-03-09', 124, 157, 1, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (719, '2018-02-20', 177, 16, 4, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (720, '2018-02-20', 65, 77, 6, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (721, '2018-03-04', 231, 32, 9, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (722, '2018-02-03', 22, 151, 9, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (723, '2018-03-10', 51, 46, 8, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (724, '2018-02-10', 158, 29, 6, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (725, '2018-01-21', 187, 153, 7, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (726, '2018-02-21', 21, 91, 4, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (727, '2018-03-25', 210, 160, 10, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (728, '2018-01-09', 19, 139, 2, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (729, '2018-01-19', 215, 48, 10, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (730, '2018-03-19', 113, 162, 6, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (731, '2018-03-21', 300, 116, 6, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (732, '2018-02-15', 156, 36, 3, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (733, '2018-02-17', 166, 176, 3, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (734, '2018-03-25', 179, 165, 10, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (735, '2018-02-14', 243, 29, 5, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (736, '2018-01-10', 49, 44, 3, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (737, '2018-01-30', 130, 25, 5, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (738, '2018-02-14', 284, 159, 7, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (739, '2018-01-28', 259, 164, 1, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (740, '2018-03-27', 156, 106, 6, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (741, '2018-01-10', 165, 180, 3, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (742, '2018-03-13', 66, 200, 5, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (743, '2018-01-04', 197, 117, 7, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (744, '2018-02-03', 233, 158, 9, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (745, '2018-03-15', 204, 13, 2, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (746, '2018-02-11', 147, 135, 10, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (747, '2018-02-25', 124, 72, 5, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (748, '2018-01-02', 138, 84, 5, '2018-01-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (749, '2018-03-14', 200, 115, 4, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (750, '2018-02-12', 264, 59, 8, '2018-02-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (751, '2018-02-04', 280, 196, 7, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (752, '2018-02-09', 129, 161, 4, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (753, '2018-03-12', 69, 30, 9, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (754, '2018-03-12', 199, 166, 9, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (755, '2018-02-17', 26, 86, 5, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (756, '2018-01-13', 144, 9, 1, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (757, '2018-02-19', 206, 75, 8, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (758, '2018-03-26', 259, 82, 6, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (759, '2018-03-15', 140, 112, 2, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (760, '2018-03-12', 89, 88, 4, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (761, '2018-02-26', 6, 151, 5, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (762, '2018-01-11', 193, 55, 1, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (763, '2018-02-13', 54, 130, 4, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (764, '2018-03-16', 33, 25, 3, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (765, '2018-03-30', 299, 34, 2, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (766, '2018-01-03', 233, 36, 6, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (767, '2018-02-10', 262, 48, 7, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (768, '2018-03-14', 226, 19, 9, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (769, '2018-01-22', 167, 29, 3, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (770, '2018-01-11', 73, 23, 9, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (771, '2018-02-23', 185, 7, 8, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (772, '2018-01-06', 244, 66, 10, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (773, '2018-01-30', 38, 149, 9, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (774, '2018-03-19', 32, 57, 10, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (775, '2018-02-17', 134, 116, 6, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (776, '2018-03-29', 189, 170, 5, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (777, '2018-02-03', 161, 157, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (778, '2018-03-27', 169, 192, 7, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (779, '2018-02-14', 253, 144, 5, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (780, '2018-01-22', 77, 69, 4, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (781, '2018-03-11', 161, 98, 6, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (782, '2018-01-24', 113, 177, 4, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (783, '2018-03-25', 74, 181, 5, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (784, '2018-02-05', 22, 137, 3, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (785, '2018-01-29', 47, 170, 4, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (786, '2018-03-26', 159, 157, 10, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (787, '2018-03-29', 165, 200, 10, '2018-04-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (788, '2018-02-10', 70, 7, 5, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (789, '2018-01-15', 188, 3, 8, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (790, '2018-01-05', 1, 69, 1, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (791, '2018-01-08', 264, 128, 7, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (792, '2018-01-25', 105, 194, 5, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (793, '2018-01-21', 18, 69, 10, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (794, '2018-01-29', 291, 98, 3, '2018-01-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (795, '2018-01-02', 88, 148, 3, '2018-01-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (796, '2018-02-03', 234, 65, 5, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (797, '2018-02-09', 192, 93, 3, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (798, '2018-02-08', 35, 86, 7, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (799, '2018-03-11', 220, 60, 1, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (800, '2018-03-11', 263, 146, 6, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (801, '2018-03-13', 129, 149, 9, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (802, '2018-03-08', 84, 47, 7, '2018-03-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (803, '2018-01-19', 144, 92, 4, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (804, '2018-03-18', 284, 109, 8, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (805, '2018-02-05', 4, 153, 7, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (806, '2018-02-16', 202, 184, 1, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (807, '2018-01-23', 63, 192, 5, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (808, '2018-02-06', 37, 176, 5, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (809, '2018-01-08', 146, 168, 3, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (810, '2018-01-23', 233, 87, 1, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (811, '2018-01-08', 246, 53, 10, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (812, '2018-03-09', 111, 121, 4, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (813, '2018-01-28', 298, 191, 2, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (814, '2018-03-19', 260, 155, 1, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (815, '2018-01-20', 206, 36, 10, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (816, '2018-01-13', 137, 86, 7, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (817, '2018-01-26', 180, 46, 5, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (818, '2018-02-13', 241, 120, 3, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (819, '2018-02-24', 253, 156, 5, '2018-03-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (820, '2018-03-11', 110, 117, 2, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (821, '2018-03-08', 45, 33, 2, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (822, '2018-03-19', 295, 48, 3, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (823, '2018-02-02', 69, 43, 1, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (824, '2018-03-17', 292, 175, 6, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (825, '2018-01-10', 266, 10, 7, '2018-01-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (826, '2018-01-29', 48, 185, 3, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (827, '2018-01-22', 293, 162, 6, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (828, '2018-01-07', 107, 114, 3, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (829, '2018-03-22', 45, 34, 1, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (830, '2018-01-15', 247, 41, 5, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (831, '2018-03-22', 151, 182, 4, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (832, '2018-02-15', 204, 164, 8, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (833, '2018-01-22', 152, 30, 6, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (834, '2018-02-01', 246, 186, 1, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (835, '2018-03-01', 116, 59, 9, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (836, '2018-01-05', 267, 33, 7, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (837, '2018-02-16', 29, 115, 1, '2018-02-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (838, '2018-02-10', 228, 109, 9, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (839, '2018-03-06', 117, 79, 7, '2018-03-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (840, '2018-02-18', 176, 62, 7, '2018-02-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (841, '2018-02-09', 256, 186, 10, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (842, '2018-01-15', 295, 10, 8, '2018-01-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (843, '2018-02-15', 221, 141, 7, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (844, '2018-03-24', 59, 73, 9, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (845, '2018-01-14', 244, 71, 4, '2018-01-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (846, '2018-01-19', 242, 10, 5, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (847, '2018-02-12', 75, 85, 4, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (848, '2018-02-13', 254, 175, 7, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (849, '2018-02-10', 170, 158, 9, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (850, '2018-03-26', 111, 87, 3, '2018-03-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (851, '2018-03-24', 22, 10, 3, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (852, '2018-03-05', 161, 54, 1, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (853, '2018-01-20', 257, 116, 6, '2018-01-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (854, '2018-01-13', 242, 52, 10, '2018-01-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (855, '2018-03-28', 227, 24, 10, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (856, '2018-01-11', 109, 38, 8, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (857, '2018-01-05', 11, 190, 8, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (858, '2018-03-15', 286, 24, 2, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (859, '2018-01-08', 49, 144, 6, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (860, '2018-01-02', 200, 147, 9, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (861, '2018-01-25', 166, 110, 9, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (862, '2018-03-22', 155, 33, 5, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (863, '2018-03-17', 170, 3, 4, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (864, '2018-03-19', 84, 116, 1, '2018-03-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (865, '2018-02-02', 96, 42, 6, '2018-02-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (866, '2018-02-02', 236, 17, 7, '2018-02-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (867, '2018-03-29', 264, 28, 6, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (868, '2018-03-18', 274, 71, 7, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (869, '2018-01-28', 109, 145, 2, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (870, '2018-02-11', 295, 16, 6, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (871, '2018-01-09', 278, 50, 5, '2018-01-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (872, '2018-03-01', 186, 104, 2, '2018-03-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (873, '2018-01-11', 52, 94, 4, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (874, '2018-01-29', 32, 149, 9, '2018-01-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (875, '2018-03-05', 236, 167, 6, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (876, '2018-01-12', 194, 87, 7, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (877, '2018-03-30', 144, 162, 3, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (878, '2018-03-16', 183, 79, 2, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (879, '2018-01-20', 187, 37, 6, '2018-01-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (880, '2018-02-20', 280, 73, 10, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (881, '2018-01-28', 255, 113, 4, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (882, '2018-01-08', 146, 197, 7, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (883, '2018-03-25', 142, 90, 3, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (884, '2018-03-20', 245, 149, 8, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (885, '2018-01-20', 156, 54, 10, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (886, '2018-03-23', 182, 15, 10, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (887, '2018-02-28', 138, 100, 10, '2018-03-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (888, '2018-03-11', 177, 86, 2, '2018-03-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (889, '2018-03-23', 39, 199, 10, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (890, '2018-03-19', 109, 157, 8, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (891, '2018-03-05', 79, 42, 8, '2018-03-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (892, '2018-02-25', 243, 57, 10, '2018-02-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (893, '2018-02-02', 101, 111, 7, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (894, '2018-01-19', 157, 168, 2, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (895, '2018-01-25', 226, 79, 1, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (896, '2018-02-06', 122, 63, 3, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (897, '2018-02-17', 299, 153, 8, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (898, '2018-02-16', 111, 108, 3, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (899, '2018-03-09', 248, 118, 1, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (900, '2018-03-13', 137, 105, 10, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (901, '2018-02-10', 100, 72, 7, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (902, '2018-01-10', 268, 200, 6, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (903, '2018-03-18', 216, 60, 6, '2018-03-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (904, '2018-01-03', 278, 171, 8, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (905, '2018-03-28', 24, 149, 2, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (906, '2018-01-04', 20, 97, 6, '2018-01-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (907, '2018-03-22', 271, 139, 1, '2018-03-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (908, '2018-03-22', 12, 138, 2, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (909, '2018-01-08', 203, 3, 2, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (910, '2018-01-13', 127, 27, 2, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (911, '2018-01-08', 109, 16, 5, '2018-01-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (912, '2018-01-19', 101, 149, 8, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (913, '2018-03-05', 5, 129, 4, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (914, '2018-02-21', 146, 153, 4, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (915, '2018-03-11', 296, 114, 8, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (916, '2018-02-16', 95, 126, 2, '2018-02-19');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (917, '2018-02-26', 265, 146, 8, '2018-03-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (918, '2018-03-24', 200, 107, 3, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (919, '2018-01-09', 147, 23, 7, '2018-01-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (920, '2018-02-17', 119, 25, 5, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (921, '2018-01-19', 267, 87, 5, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (922, '2018-02-12', 76, 32, 7, '2018-02-16');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (923, '2018-01-30', 250, 194, 1, '2018-02-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (924, '2018-03-10', 63, 161, 8, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (925, '2018-03-29', 107, 175, 1, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (926, '2018-01-30', 149, 142, 10, '2018-02-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (927, '2018-02-01', 28, 96, 10, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (928, '2018-01-09', 129, 135, 5, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (929, '2018-01-03', 151, 162, 5, '2018-01-05');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (930, '2018-02-14', 140, 151, 4, '2018-02-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (931, '2018-03-21', 212, 66, 7, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (932, '2018-03-22', 47, 111, 1, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (933, '2018-01-09', 265, 24, 6, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (934, '2018-01-27', 49, 68, 3, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (935, '2018-03-10', 278, 36, 1, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (936, '2018-01-16', 262, 109, 10, '2018-01-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (937, '2018-03-23', 254, 91, 1, '2018-03-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (938, '2018-01-26', 221, 133, 3, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (939, '2018-01-05', 78, 195, 9, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (940, '2018-02-14', 99, 102, 5, '2018-02-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (941, '2018-03-03', 205, 57, 4, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (942, '2018-03-03', 73, 194, 7, '2018-03-07');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (943, '2018-01-31', 197, 84, 3, '2018-02-03');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (944, '2018-03-04', 212, 173, 9, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (945, '2018-01-02', 71, 80, 6, '2018-01-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (946, '2018-03-09', 35, 48, 8, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (947, '2018-01-23', 144, 97, 10, '2018-01-29');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (948, '2018-02-11', 167, 105, 1, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (949, '2018-02-09', 253, 151, 1, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (950, '2018-03-11', 113, 72, 2, '2018-03-15');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (951, '2018-02-18', 69, 124, 6, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (952, '2018-01-22', 115, 120, 6, '2018-01-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (953, '2018-03-19', 246, 152, 8, '2018-03-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (954, '2018-02-28', 150, 145, 3, '2018-03-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (955, '2018-03-14', 49, 75, 1, '2018-03-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (956, '2018-02-10', 30, 101, 2, '2018-02-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (957, '2018-02-22', 154, 11, 2, '2018-02-28');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (958, '2018-01-19', 30, 50, 7, '2018-01-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (959, '2018-01-18', 120, 153, 9, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (960, '2018-01-12', 154, 40, 1, '2018-01-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (961, '2018-03-21', 239, 32, 6, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (962, '2018-02-21', 268, 9, 8, '2018-02-23');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (963, '2018-03-21', 292, 79, 1, '2018-03-26');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (964, '2018-03-16', 116, 174, 9, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (965, '2018-02-27', 93, 33, 7, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (966, '2018-01-07', 160, 128, 4, '2018-01-11');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (967, '2018-03-13', 16, 108, 7, '2018-03-18');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (968, '2018-03-09', 207, 131, 9, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (969, '2018-02-06', 175, 106, 9, '2018-02-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (970, '2018-03-27', 6, 193, 6, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (971, '2018-02-05', 102, 68, 6, '2018-02-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (972, '2018-02-19', 107, 3, 2, '2018-02-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (973, '2018-03-21', 225, 21, 2, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (974, '2018-03-12', 132, 45, 7, '2018-03-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (975, '2018-01-30', 40, 13, 6, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (976, '2018-02-11', 46, 164, 5, '2018-02-13');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (977, '2018-02-09', 204, 153, 7, '2018-02-14');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (978, '2018-03-26', 207, 169, 1, '2018-03-31');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (979, '2018-01-29', 133, 188, 9, '2018-02-04');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (980, '2018-02-23', 33, 141, 9, '2018-02-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (981, '2018-03-17', 16, 2, 5, '2018-03-20');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (982, '2018-01-26', 109, 168, 7, '2018-01-27');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (983, '2018-03-24', 269, 69, 3, '2018-03-30');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (984, '2018-01-13', 40, 19, 1, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (985, '2018-01-05', 72, 54, 5, '2018-01-06');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (986, '2018-01-07', 26, 90, 3, '2018-01-10');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (987, '2018-03-18', 214, 184, 7, '2018-03-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (988, '2018-03-29', 13, 120, 4, '2018-04-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (989, '2018-01-13', 253, 164, 5, '2018-01-17');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (990, '2018-03-18', 2, 52, 7, '2018-03-21');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (991, '2018-02-20', 229, 37, 10, '2018-02-24');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (992, '2018-03-02', 192, 156, 10, '2018-03-08');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (993, '2018-03-11', 150, 125, 2, '2018-03-12');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (994, '2018-03-28', 275, 153, 6, '2018-04-01');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (995, '2018-01-18', 281, 51, 4, '2018-01-22');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (996, '2018-01-27', 110, 175, 2, '2018-02-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (997, '2018-03-22', 185, 122, 10, '2018-03-25');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (998, '2018-01-03', 220, 13, 2, '2018-01-09');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (999, '2018-03-01', 81, 82, 3, '2018-03-02');
-insert into rentalLog (intID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) values (1000, '2018-03-25', 206, 127, 2, '2018-03-30');
+
+-- GENERATE FAKE DATA --
+DROP PROCEDURE IF EXISTS sp_INSERTDefaultEntries;
+DELIMITER //
+CREATE PROCEDURE sp_INSERTDefaultEntries(in sp_loop int)
+BEGIN
+	DECLARE dteCreated datetime default current_timestamp();
+	DECLARE dteReturned datetime default current_timestamp();
+	DECLARE intDaysInterval int default 0;
+    DECLARE intDayForEntry int default 0;
+    DECLARE intRandomDaysOfRental int default 0;
+    DECLARE intRandomReturnDate int default 0;
+    DECLARE intLastID int default 0;
+
+	DECLARE intAllMovies int default 0;
+	DECLARE intRandomMovie int default 0;
+	DECLARE intAllCustomers int default 0;
+	DECLARE intRandomCustomer int default 0;
+	DECLARE intAllStaff int default 0;
+	DECLARE intRandomStaff int default 0;
+
+	DECLARE intStart int default 0;
+	DECLARE intStop int default 0;
+	DECLARE intDuplicateEntry int default 0;
+
+	SET intStop = sp_loop;
+
+    SET intAllMovies = (SELECT COUNT(*) FROM movies);
+    SET intAllCustomers = (SELECT COUNT(*) FROM customers);
+    SET intAllStaff = (SELECT COUNT(*) FROM staff);
+
+	-- count days = 3 months
+    SET intDaysInterval =  datediff(current_date(), date_add(current_date(), interval -3 month));
+
+set sp_message9 = dteCreated ;
+
+	REPEAT
+		-- select random day for entry
+		SET intDayForEntry = (select FORMAT(RAND()*(intDaysInterval - 1)+1,0));
+		-- set dteCreated for this entry
+        SET dteCreated = date_add(current_date(), interval -intDayForEntry day);
+	
+		-- set dteReturned
+        SET intRandomReturnDate = (select FORMAT(RAND()*(5)+1,0));
+        SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
+
+		-- make sure it's not today or in the future.
+       IF date(dteReturned) > current_date() THEN
+			SET dteReturned = null;
+		END IF;
+
+		-- select random movie
+   		SET intRandomMovie = FORMAT(RAND()*(intAllMovies -1)+1,0);
+        -- select random customer
+   		SET intRandomCustomer = FORMAT(RAND()*(intAllCustomers -1)+1,0);
+        -- select random staff
+   		SET intRandomStaff = FORMAT(RAND()*(intAllStaff -1)+1,0);
+
+
+		-- check for duplicate entery
+		SET intDuplicateEntry = 0;
+        IF dteReturned IS NOT NULL THEN
+			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
+            WHERE intMovieID = intRandomMovie AND dteCreated >= dteCreated AND dteReturned <= dteReturned );
+		END IF;
+
+		IF intDuplicateEntry = 0 THEN
+			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
+			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
+		END IF;
+
+
+       IF dteReturned IS NULL THEN
+			SET intDuplicateEntry = 0;
+			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
+			IF intDuplicateEntry = 0 THEN
+--				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
+				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+			END IF;
+		END IF;
+
+		SET intDuplicateEntry = 0;
+   		SET intStart = intStart + 1;
+	UNTIL intStart = intStop END REPEAT;
+
+END//
+
+DELIMITER ;
+
+CALL sp_INSERTDefaultEntries(3000);
 
 
 
+
+-- INSERT VIEWS
+DROP VIEW IF EXISTS view_MoviesInventory;
+CREATE VIEW view_MoviesInventory AS 
+SELECT m.strName AS TITLE, CONCAT(pc.strName, ' ',  pc.intPrice, ' kr.') AS PRICE, m.strLength AS MINUTES, YEAR(m.strYear) AS RELEASED,
+CONCAT(d.strFirstname, ' ', d.strLastname, ' (', YEAR(d.dteBirthOfYear), ')') AS DIRECTOR, 
+(SELECT GROUP_CONCAT(CONCAT(a.strFirstName, ' ', a.strLastName )) FROM actors a, movieactor ma WHERE a.intID = ma.intActorID AND ma.intMovieID = m.intID ) AS `ACTORS IN THE MOVIE`,
+(SELECT COUNT(*) FROM actors a, movieactor ma WHERE a.intID = ma.intActorID AND ma.intMovieID = m.intID ) AS `# ACTORS IN THE MOVIE`,
+g.strName AS GENRE, m.strISBN AS ISBN, m.strDescription AS SHORTTEXT
+FROM movies m
+LEFT JOIN genre g ON g.intID = m.intGenreID 
+LEFT JOIN directors d ON d.intID = m.intDirectorID
+LEFT JOIN priceCategory pc ON pc.intID = m.intPriceCategoryID 
+ORDER BY TITLE;
+
+-- WORKS!! :-) V1
+-- två olika typer av [genre] : som separat tabell. 
+DROP VIEW IF EXISTS view_genreV1;
+CREATE VIEW view_genreV1 AS 
+SELECT g.strName AS GENRE, COUNT(m.strName) AS `NR OF MOVES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
+FROM genre g
+JOIN movies m ON g.intID = m.intGenreID
+GROUP BY g.strName;
+
+-- WORKS!! :-) V2
+-- två olika typer av [genre] : som fält i tabellen. 
+DROP VIEW IF EXISTS view_genreV2;
+CREATE VIEW view_genreV2 AS 
+SELECT m.strGenre AS GENRE, COUNT(m.strName) AS `NR OF MOVES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
+FROM movies m
+GROUP BY m.strGenre;
+
+
+-- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom
+DROP VIEW IF EXISTS view_rentalLog;
+CREATE VIEW view_rentalLog AS 
+SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
+CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
+DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
+FROM rentalLog rl
+JOIN staff s ON rl.intStaffID = s.intID
+JOIN customers c ON rl.intCustomerID = c.intID
+JOIN movies m ON rl.intMovieID = m.intID
+ORDER BY rl.dteCreated, m.strName;
+
+
+-- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom -- '2018-03-05'
+DROP VIEW IF EXISTS view_rentalLogDATE;
+CREATE VIEW view_rentalLogDATE AS 
+SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
+CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
+DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
+FROM rentalLog rl
+JOIN staff s ON rl.intStaffID = s.intID
+JOIN customers c ON rl.intCustomerID = c.intID
+JOIN movies m ON rl.intMovieID = m.intID
+WHERE DATE(rl.dteCreated) = '2018-03-05'
+ORDER BY m.strName;
+
+
+-- 4. vilka filmer har gått över tiden. vilka har inte blivit återlämnade.
+DROP VIEW IF EXISTS view_LateMoviesALL_LOG;
+CREATE VIEW view_LateMoviesALL_LOG AS 
+SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
+CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS CREATED,
+DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
+FROM rentalLog rl
+JOIN staff s ON rl.intStaffID = s.intID
+JOIN customers c ON rl.intCustomerID = c.intID
+JOIN movies m ON rl.intMovieID = m.intID
+WHERE rl.dteReturned NOT BETWEEN rl.dteCreated AND date_add(rl.dteCreated, interval 4 day)
+ORDER BY m.strName;
+
+
+DROP VIEW IF EXISTS view_LateMoviesALL_LOG;
+CREATE VIEW view_LateMoviesDATE AS 
+SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
+CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS CREATED,
+DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
+FROM rentalLog rl
+JOIN staff s ON rl.intStaffID = s.intID
+JOIN customers c ON rl.intCustomerID = c.intID
+JOIN movies m ON rl.intMovieID = m.intID
+WHERE rl.dteCreated = '2018-03-05' AND rl.dteReturned NOT BETWEEN '2018-03-05' AND date_add('2018-03-05', interval 4 day)
+ORDER BY m.strName;
+
+-- 5. lista över alla anställda och hur många filmer de har hyrt ut.
+DROP VIEW IF EXISTS view_MoviesPerStaffALL_LOG;
+CREATE VIEW view_MoviesPerStaffALL_LOG AS 
+SELECT CONCAT(s.strFirstName, ' ', s.strLastName) AS `STAFF / EMPLOYER`,
+(SELECT COUNT(*) AS MoviesPerStaff FROM rentallog rl WHERE rl.intStaffID = s.intID  ) AS `MOVIE PER STAFF MEMBER` 
+FROM staff s;
+
+-- 6. en lista med statistik över de mest uthyrda filmerna den senaste månaden. 
+-- för uppgiften: månad = mars 2018, 2018-03-01 --> 184 rader
+-- för uppgiften: månad = mars 2018, 2018-03-01 -- 2018-04-01 --> 184 rader
+
+DROP VIEW IF EXISTS view_MostWantedMovies;
+CREATE VIEW view_MostWantedMovies AS 
+SELECT m.strName AS `MOVIE NAME`,
+(SELECT GROUP_CONCAT(DATE(rl.dteCreated)) FROM rentalLog rl
+WHERE rl.intMovieID= m.intID AND  rl.dteCreated >= '2018-03-01'
+AND rl.dteCreated <= '2018-03-31'
+) AS `DATE OF RENTAL`,
+(SELECT COUNT(rl.intID)  FROM rentalLog rl
+WHERE rl.intMovieID = m.intID AND  rl.dteCreated >= '2018-03-01'
+AND rl.dteCreated <= '2018-03-31' 
+) AS `MOST WANTED IN MARS`
+FROM rentallog rl
+JOIN movies m ON rl.intMovieID = m.intID
+WHERE rl.dteCreated >= '2018-03-01' AND rl.dteCreated <= '2018-03-31'
+GROUP BY m.strName
+ORDER BY `MOST WANTED IN MARS` DESC;
+
+
+-- Fråga 7: En Stored Procedure som ska köras när en film lämnas ut. Ska alltså sätta filmen till uthyrd, vem som hyrt den osv.
+
+-- skapa en post, isNotInStore (date, intMovieID)
+-- skapa en post, rentalLog (date, intMovieID, intCustomerID, intStaffID)
+-- om fälten är tomma, random! :-)
+DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
+DELIMITER //
+CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int)
+BEGIN
+
+	DECLARE local_MovieID int default 0;
+    DECLARE local_CustomerID int default 0;
+    DECLARE local_StaffID int default 0;
+    DECLARE local_rows integer default 0; -- ??
+    DECLARE local_randomID integer default 0;
+
+-- update code
+-- select movie
+    IF sp_MovieID = '0' THEN
+		SET local_randomID = (SELECT COUNT(*) FROM movies);
+		SET local_MovieID = FORMAT(RAND()*(local_randomID)+1,0);
+    ELSE
+		SET local_MovieID = sp_MovieID;
+    END IF;
+    
+-- insert movie as taken
+	INSERT INTO isnotinstore (dteCreated, intMovieID) VALUES (current_date(), local_MovieID );
+
+-- select customer
+    IF sp_CustomerID = '0' THEN
+		SET local_randomID = (SELECT COUNT(*) FROM customers);
+		SET local_CustomerID = FORMAT(RAND()*(local_randomID)+1,0);
+    ELSE
+		SET local_CustomerID = sp_CustomerID;
+    END IF;
+    
+-- select staff
+    IF sp_StaffID = '0' THEN
+		SET local_randomID = (SELECT COUNT(*) FROM staff);
+		SET local_StaffID = FORMAT(RAND()*(local_randomID)+1,0);
+    ELSE
+		SET local_StaffID = sp_StaffID;
+    END IF;
+
+
+-- insert log file
+	INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+    VALUES (current_timestamp(), local_MovieID, local_CustomerID, local_StaffID );
+END //
+
+DELIMITER ;
