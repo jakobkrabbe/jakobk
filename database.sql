@@ -2097,15 +2097,11 @@ BEGIN
         -- select random staff
    		SET intRandomStaff = FORMAT(RAND()*(intAllStaff -1)+1,0);
 
-
 		-- check for duplicate entery
 		SET intDuplicateEntry = 0;
         IF dteReturned IS NOT NULL THEN
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
             WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
-		END IF;
-
-		IF intDuplicateEntry = 0 THEN
 			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
 			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
 		END IF;
@@ -2114,7 +2110,13 @@ BEGIN
        IF dteReturned IS NULL THEN
 			SET intDuplicateEntry = 0;
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
-			IF intDuplicateEntry = 0 THEN
+			IF intDuplicateEntry = 1 THEN
+				-- update log
+				SET intLastID = (select intID from rentallog order by intID desc limit 1,1);
+				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+				UPDATE isnotinstore SET dteCreated = dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
+			ELSE
+                -- inset in new log
 				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
 			END IF;
