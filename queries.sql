@@ -40,7 +40,8 @@ select  @movieID AS `MOVIE ID`, @movieName AS `MOVIE NAME`, @moviePriceText AS `
 
 -- Fråga 8: Gör en funktion som tar en film som parameter och returnerar olika värden beroende på om filmen är sent inlämnad eller inte. Dvs, om du matar in film nr 345 ska du få tillbaka TRUE om filmen är uthyrd men borde vara tillbakalämnad, annars FALSE. (1 och 0 funkar också om det är lättare.)
 
-SELECT * FROM products;
+select * FROM isnotinstore order by intID DESC;
+
 
 -- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
