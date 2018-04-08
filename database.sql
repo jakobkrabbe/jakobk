@@ -2254,49 +2254,93 @@ ORDER BY `MOST WANTED IN A MONTH` DESC;
 -- skapa en post, isNotInStore (date, intMovieID)
 -- skapa en post, rentalLog (date, intMovieID, intCustomerID, intStaffID)
 -- om fälten är tomma, random! :-)
+
+-- dates not working
+
 DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
 DELIMITER //
-CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int)
+CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int, 
+OUT out_movieID int,
+OUT out_movieName varchar(200),
+OUT out_moviePriceText varchar(100),
+OUT out_moviePrice double,
+OUT out_DayOfRental datetime,
+OUT out_DayOfReturn datetime,
+OUT out_CustomerName varchar(200),
+OUT out_StaffName varchar(200),
+OUT out_Message varchar(100))
 BEGIN
 
 	DECLARE local_MovieID int default 0;
     DECLARE local_CustomerID int default 0;
     DECLARE local_StaffID int default 0;
-    DECLARE local_rows integer default 0; -- ??
     DECLARE local_randomID integer default 0;
+	DECLARE local_isForRental integer default 0;
+    DECLARE local_lastID integer default 0;
+    -- sp_FakeDays = 0 = new post
+    -- sp_FakeDays = int = 'old' post 'int' days ago.
 
 -- update code
 -- select movie
     IF sp_MovieID = '0' THEN
-		SET local_randomID = (SELECT COUNT(*) FROM movies);
-		SET local_MovieID = FORMAT(RAND()*(local_randomID)+1,0);
+	--	SET local_randomID = (SELECT COUNT(*) FROM movies);
+	--	SET local_MovieID = FORMAT(RAND()*(local_randomID -1)+1,0);
+		SET local_MovieID = (select m.intID FROM movies m left join isnotinstore i ON m.intID = i.intMovieID where i.intID IS NULL LIMIT 1,1);   
     ELSE
 		SET local_MovieID = sp_MovieID;
     END IF;
     
--- insert movie as taken
-	INSERT INTO isnotinstore (dteCreated, intMovieID) VALUES (current_date(), local_MovieID );
+    -- check if movie is for rental!
+    SET local_isForRental = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = local_MovieID );
 
--- select customer
-    IF sp_CustomerID = '0' THEN
-		SET local_randomID = (SELECT COUNT(*) FROM customers);
-		SET local_CustomerID = FORMAT(RAND()*(local_randomID)+1,0);
-    ELSE
-		SET local_CustomerID = sp_CustomerID;
-    END IF;
+	IF local_isForRental = 0 THEN
+     
+		-- select customer
+		IF sp_CustomerID = '0' THEN
+			SET local_randomID = (SELECT COUNT(*) FROM customers);
+			SET local_CustomerID = FORMAT(RAND()*(local_randomID -1)+1,0);
+		ELSE
+			SET local_CustomerID = sp_CustomerID;
+		END IF;
     
 -- select staff
     IF sp_StaffID = '0' THEN
 		SET local_randomID = (SELECT COUNT(*) FROM staff);
-		SET local_StaffID = FORMAT(RAND()*(local_randomID)+1,0);
+		SET local_StaffID = FORMAT(RAND()*(local_randomID -1)+1,0);
     ELSE
 		SET local_StaffID = sp_StaffID;
     END IF;
 
-
 -- insert log file
-	INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
-    VALUES (current_timestamp(), local_MovieID, local_CustomerID, local_StaffID );
+		INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+		VALUES (current_timestamp(), local_MovieID, local_CustomerID, local_StaffID );
+        SET local_lastID = (select intid from rentallog order by intID desc limit 1,1);
+		INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (current_timestamp(), local_MovieID, local_lastID );
+        SET local_lastID = (select intid from isnotinstore order by intID desc limit 1,1);
+ 
+		-- set return values ::  @movieID, @movieName, @moviePrice, @dayOfRental, @dayOfReturn, @customer, @staff, @message);
+		select m.intID INTO out_movieID from isnotinstore i, movies m where i.intID = local_lastID AND m.intID = i.intMovieID;
+		select m.strName INTO out_movieName from isnotinstore i, movies m where i.intID = local_lastID AND m.intID = i.intMovieID;
+        select pc.strName INTO out_moviePriceText from isnotinstore i, movies m, pricecategory pc 
+			where i.intID = local_lastID AND i.intMovieID = m.intID AND m.intPriceCategoryID = pc.intID;
+
+        select pc.intPrice INTO out_moviePrice from isnotinstore i, movies m, pricecategory pc 
+			where i.intID = local_lastID AND i.intMovieID = m.intID AND m.intPriceCategoryID = pc.intID;
+            
+        select i.dteCreated INTO out_DayOfRental from movies m, isnotinstore i 
+			where i.intID = local_lastID and m.intID = i.intMovieID;
+        select date_add(i.dteCreated, interval 4 day) INTO out_DayOfReturn from movies m, isnotinstore i 
+			where i.intID = local_lastID and m.intID = i.intMovieID;
+        select  concat(c.strFirstName, ' ', c.strLastName) INTO out_CustomerName from isnotinstore i, movies m, rentallog rl, customers c 
+        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intCustomerID = c.intID;
+        select  concat(s.strFirstName, ' ', s.strLastName) INTO out_StaffName from isnotinstore i, movies m, rentallog rl, customers c 
+        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intCustomerID = s.intID;
+
+        
+		SET out_Message = "Thank you for choosing MAX VideoRental!";
+	ELSE
+		SET out_Message = "This movie is taken. Please choose another.";
+    END IF;
 END //
 
 DELIMITER ;
