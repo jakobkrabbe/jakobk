@@ -2075,8 +2075,6 @@ BEGIN
 	-- count days = 3 months
     SET intDaysInterval =  datediff(current_date(), date_add(current_date(), interval -3 month));
 
-set sp_message9 = dteCreated ;
-
 	REPEAT
 		-- select random day for entry
 		SET intDayForEntry = (select FORMAT(RAND()*(intDaysInterval - 1)+1,0));
@@ -2104,7 +2102,7 @@ set sp_message9 = dteCreated ;
 		SET intDuplicateEntry = 0;
         IF dteReturned IS NOT NULL THEN
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
-            WHERE intMovieID = intRandomMovie AND dteCreated >= dteCreated AND dteReturned <= dteReturned );
+            WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
 		END IF;
 
 		IF intDuplicateEntry = 0 THEN
@@ -2117,7 +2115,7 @@ set sp_message9 = dteCreated ;
 			SET intDuplicateEntry = 0;
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
 			IF intDuplicateEntry = 0 THEN
---				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
+				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
 			END IF;
 		END IF;
@@ -2153,7 +2151,7 @@ ORDER BY TITLE;
 -- två olika typer av [genre] : som separat tabell. 
 DROP VIEW IF EXISTS view_genreV1;
 CREATE VIEW view_genreV1 AS 
-SELECT g.strName AS GENRE, COUNT(m.strName) AS `NR OF MOVES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
+SELECT g.strName AS GENRE, COUNT(m.strName) AS `NR OF MOVIES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
 FROM genre g
 JOIN movies m ON g.intID = m.intGenreID
 GROUP BY g.strName;
@@ -2162,10 +2160,9 @@ GROUP BY g.strName;
 -- två olika typer av [genre] : som fält i tabellen. 
 DROP VIEW IF EXISTS view_genreV2;
 CREATE VIEW view_genreV2 AS 
-SELECT m.strGenre AS GENRE, COUNT(m.strName) AS `NR OF MOVES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
+SELECT m.strGenre AS GENRE, COUNT(m.strName) AS `NR OF MOVIES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
 FROM movies m
-GROUP BY m.strGenre;
-
+GROUP BY m.strGenre ORDER BY `NR OF MOVIES` DESC;
 
 -- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom
 DROP VIEW IF EXISTS view_rentalLog;
@@ -2180,18 +2177,19 @@ JOIN movies m ON rl.intMovieID = m.intID
 ORDER BY rl.dteCreated, m.strName;
 
 
--- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom -- '2018-03-05'
+-- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom -- date = TODAY date()
 DROP VIEW IF EXISTS view_rentalLogDATE;
 CREATE VIEW view_rentalLogDATE AS 
-SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
+SELECT m.intID as ID, m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
 CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
-DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
-FROM rentalLog rl
-JOIN staff s ON rl.intStaffID = s.intID
-JOIN customers c ON rl.intCustomerID = c.intID
-JOIN movies m ON rl.intMovieID = m.intID
-WHERE DATE(rl.dteCreated) = '2018-03-05'
-ORDER BY m.strName;
+DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN` 
+FROM isnotinstore i 
+INNER JOIN movies m ON i.intMovieID = m.intID
+INNER JOIN rentallog rl ON i.intRentalLogID = rl.intID
+INNER JOIN staff s ON rl.intStaffID = s.intID
+INNER JOIN customers c ON rl.intCustomerID = c.intID
+GROUP BY i.intID
+ORDER BY m.intID;
 
 
 -- 4. vilka filmer har gått över tiden. vilka har inte blivit återlämnade.
@@ -2207,25 +2205,28 @@ JOIN movies m ON rl.intMovieID = m.intID
 WHERE rl.dteReturned NOT BETWEEN rl.dteCreated AND date_add(rl.dteCreated, interval 4 day)
 ORDER BY m.strName;
 
-
-DROP VIEW IF EXISTS view_LateMoviesALL_LOG;
+DROP VIEW IF EXISTS view_LateMoviesDATE;
 CREATE VIEW view_LateMoviesDATE AS 
-SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
-CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS CREATED,
-DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
-FROM rentalLog rl
-JOIN staff s ON rl.intStaffID = s.intID
-JOIN customers c ON rl.intCustomerID = c.intID
-JOIN movies m ON rl.intMovieID = m.intID
-WHERE rl.dteCreated = '2018-03-05' AND rl.dteReturned NOT BETWEEN '2018-03-05' AND date_add('2018-03-05', interval 4 day)
-ORDER BY m.strName;
+SELECT i.intID AS COUNTER , m.intID AS `MOVIE ID`, m.strName AS `NAME OF MOVIE`, DATE(i.dteCreated) AS `DAY OF RENTAL`,
+date(i.dteCreated + INTERVAL 4 DAY) AS `DAY OF EXPECTED RETURN`,
+current_date() - date(i.dteCreated + INTERVAL 4 DAY) AS `DAY(S) LATE`,
+CONCAT(s.strFirstName, ' ', s.strLastName ) AS STAFF, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER
+FROM isnotinstore i 
+JOIN movies m ON m.intID = i.intMovieID
+INNER JOIN rentallog rl ON rl.intMovieID = m.intID
+JOIN staff s ON s.intID = rl.intStaffID
+JOIN customers c ON c.intID = rl.intCustomerID
+WHERE i.dteCreated + INTERVAL 4 DAY < current_date()
+GROUP BY i.intID;
+
 
 -- 5. lista över alla anställda och hur många filmer de har hyrt ut.
 DROP VIEW IF EXISTS view_MoviesPerStaffALL_LOG;
 CREATE VIEW view_MoviesPerStaffALL_LOG AS 
 SELECT CONCAT(s.strFirstName, ' ', s.strLastName) AS `STAFF / EMPLOYER`,
 (SELECT COUNT(*) AS MoviesPerStaff FROM rentallog rl WHERE rl.intStaffID = s.intID  ) AS `MOVIE PER STAFF MEMBER` 
-FROM staff s;
+FROM staff s
+ORDER BY `MOVIE PER STAFF MEMBER` DESC;
 
 -- 6. en lista med statistik över de mest uthyrda filmerna den senaste månaden. 
 -- för uppgiften: månad = mars 2018, 2018-03-01 --> 184 rader
@@ -2235,18 +2236,17 @@ DROP VIEW IF EXISTS view_MostWantedMovies;
 CREATE VIEW view_MostWantedMovies AS 
 SELECT m.strName AS `MOVIE NAME`,
 (SELECT GROUP_CONCAT(DATE(rl.dteCreated)) FROM rentalLog rl
-WHERE rl.intMovieID= m.intID AND  rl.dteCreated >= '2018-03-01'
-AND rl.dteCreated <= '2018-03-31'
+WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add(current_date(), INTERVAL -1 MONTH) AND current_date())
 ) AS `DATE OF RENTAL`,
 (SELECT COUNT(rl.intID)  FROM rentalLog rl
-WHERE rl.intMovieID = m.intID AND  rl.dteCreated >= '2018-03-01'
-AND rl.dteCreated <= '2018-03-31' 
-) AS `MOST WANTED IN MARS`
+WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add(current_date(), INTERVAL -1 MONTH) AND current_date())
+) AS `MOST WANTED IN A MONTH`
 FROM rentallog rl
 JOIN movies m ON rl.intMovieID = m.intID
-WHERE rl.dteCreated >= '2018-03-01' AND rl.dteCreated <= '2018-03-31'
+WHERE rl.dteCreated BETWEEN date_add(current_date(), INTERVAL -1 MONTH) AND current_date()
 GROUP BY m.strName
-ORDER BY `MOST WANTED IN MARS` DESC;
+ORDER BY `MOST WANTED IN A MONTH` DESC;
+
 
 
 -- Fråga 7: En Stored Procedure som ska köras när en film lämnas ut. Ska alltså sätta filmen till uthyrd, vem som hyrt den osv.
