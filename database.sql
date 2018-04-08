@@ -2122,16 +2122,16 @@ BEGIN
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
 			END IF;
 		END IF;
+
 		-- extra check for duplicate records
         SET intDuplicateEntry = 0;
-        SET intDuplicateEntry = (select rl.dteReturned from isnotinstore i, rentallog rl 
+        SET intDuplicateEntry = (select count(*) from isnotinstore i, rentallog rl 
         where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
-		IF intDuplicateEntry = 0 THEN
-			SET intLastID = (select intID from rentallog order by intID desc limit 1,1);
-            DELETE FROM rentallog WHERE intID = intLastID;
+        IF intDuplicateEntry = 1 THEN
 			SET intLastID = (select intID from isnotinstore order by intID desc limit 1,1);
             DELETE FROM isnotinstore WHERE intID = intLastID;
         END IF;
+
         
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
@@ -2142,9 +2142,6 @@ END//
 DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
-
-
-
 
 -- INSERT VIEWS
 DROP VIEW IF EXISTS view_MoviesInventory;
