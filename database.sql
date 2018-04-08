@@ -2255,8 +2255,6 @@ ORDER BY `MOST WANTED IN A MONTH` DESC;
 -- skapa en post, rentalLog (date, intMovieID, intCustomerID, intStaffID)
 -- om fälten är tomma, random! :-)
 
--- dates not working
-
 DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
 DELIMITER //
 CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int, 
@@ -2264,8 +2262,8 @@ OUT out_movieID int,
 OUT out_movieName varchar(200),
 OUT out_moviePriceText varchar(100),
 OUT out_moviePrice double,
-OUT out_DayOfRental datetime,
-OUT out_DayOfReturn datetime,
+OUT out_DayOfRental date,
+OUT out_DayOfReturn date,
 OUT out_CustomerName varchar(200),
 OUT out_StaffName varchar(200),
 OUT out_Message varchar(100))
@@ -2327,14 +2325,14 @@ BEGIN
         select pc.intPrice INTO out_moviePrice from isnotinstore i, movies m, pricecategory pc 
 			where i.intID = local_lastID AND i.intMovieID = m.intID AND m.intPriceCategoryID = pc.intID;
             
-        select i.dteCreated INTO out_DayOfRental from movies m, isnotinstore i 
+        select date(i.dteCreated) INTO out_DayOfRental from movies m, isnotinstore i 
 			where i.intID = local_lastID and m.intID = i.intMovieID;
-        select date_add(i.dteCreated, interval 4 day) INTO out_DayOfReturn from movies m, isnotinstore i 
+        select date(date_add(i.dteCreated, interval 4 day)) INTO out_DayOfReturn from movies m, isnotinstore i 
 			where i.intID = local_lastID and m.intID = i.intMovieID;
         select  concat(c.strFirstName, ' ', c.strLastName) INTO out_CustomerName from isnotinstore i, movies m, rentallog rl, customers c 
-        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intCustomerID = c.intID;
-        select  concat(s.strFirstName, ' ', s.strLastName) INTO out_StaffName from isnotinstore i, movies m, rentallog rl, customers c 
-        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intCustomerID = s.intID;
+        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intCustomerID = c.intID  order by i.intID desc limit 1,1;
+        select  concat(s.strFirstName, ' ', s.strLastName) INTO out_StaffName from isnotinstore i, movies m, rentallog rl, staff s 
+        where i.intID = local_lastID and i.intMovieID = m.intID AND rl.intMovieID = m.intID and rl.intStaffID = s.intID  order by i.intID desc limit 1,1;
 
         
 		SET out_Message = "Thank you for choosing MAX VideoRental!";
