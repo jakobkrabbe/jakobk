@@ -18,7 +18,7 @@ USE jakobk;
 CREATE TABLE priceCategory (
 intID integer NOT NULL AUTO_INCREMENT, 
 strName varchar(50) NOT NULL, 
-intPrice integer NOT NULL, 
+intPrice double NOT NULL, 
 PRIMARY KEY (intID)
 );
 
