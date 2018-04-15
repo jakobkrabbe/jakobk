@@ -2082,7 +2082,7 @@ BEGIN
         SET dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
-        SET intRandomReturnDate = (select FORMAT(RAND()*(10)+1,0));
+        SET intRandomReturnDate = (select FORMAT(RAND()*(7S)+1,0));
         SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
 
 		-- make sure it's not today or in the future.
@@ -2108,40 +2108,56 @@ BEGIN
 			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
 			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
         END IF;
-
+	
        IF dteReturned IS NULL THEN
 			SET intDuplicateEntry = 0;
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
 			IF intDuplicateEntry = 1 THEN
 				-- update log
-				SET intLastID = (select intID from rentallog order by intID desc limit 1,1);
+				SET intLastID = (select intID from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
 				UPDATE isnotinstore SET dteCreated = dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
 			ELSE
                 -- inset in new log
-				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
+				SET intLastID = (select intid from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
 			END IF;
+	
 		END IF;
 
-		-- extra check for duplicate records
-        SET intDuplicateEntry = 0;
-        SET intDuplicateEntry = (select count(*) from isnotinstore i, rentallog rl 
-        where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
-        IF intDuplicateEntry = 1 THEN
-			SET intLastID = (select intID from isnotinstore order by intID desc limit 1,1);
-            DELETE FROM isnotinstore WHERE intID = intLastID;
-        END IF;
-
-        
+	
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
 	UNTIL intStart = intStop END REPEAT;
-
 END//
 
 DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
+
+
+-- GENERATE FAKE DATA --
+DROP PROCEDURE IF EXISTS sp_DELETEInvalidEntries;
+DELIMITER //
+CREATE PROCEDURE sp_DELETEInvalidEntries()
+BEGIN
+	DECLARE intStart int default 0;
+	DECLARE intStop int default 0;
+	DECLARE intDuplicateEntry int default 0;
+	
+	-- DELETE MULTIPLE ENTRIES
+    SET intStop = (select * from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
+	SET intStart = 0;
+	REPEAT
+		SET intLastID = (select i.intID from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
+		-- delete from isnotinstore where intID = intLastID; 
+   		SET intStart = intStart + 1;
+	UNTIL intStart = intStop END REPEAT;
+
+END//
+DELIMITER ;
+
+-- CALL sp_DELETEInvalidEntries();
+
 
 -- INSERT VIEWS
 DROP VIEW IF EXISTS view_MoviesInventory;
