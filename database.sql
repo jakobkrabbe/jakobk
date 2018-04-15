@@ -2082,7 +2082,7 @@ BEGIN
         SET dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
-        SET intRandomReturnDate = (select FORMAT(RAND()*(5)+1,0));
+        SET intRandomReturnDate = (select FORMAT(RAND()*(7)+1,0));
         SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
 
 		-- make sure it's not today or in the future.
@@ -2102,30 +2102,32 @@ BEGIN
         IF dteReturned IS NOT NULL THEN
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
             WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
-			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
-			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
 		END IF;
 
-
+		IF intDuplicateEntry = 0 THEN
+			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
+			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
+        END IF;
+	
        IF dteReturned IS NULL THEN
 			SET intDuplicateEntry = 0;
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
 			IF intDuplicateEntry = 1 THEN
 				-- update log
-				SET intLastID = (select intID from rentallog order by intID desc limit 1,1);
-				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+				SET intLastID = (select intID from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
 				UPDATE isnotinstore SET dteCreated = dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
 			ELSE
                 -- inset in new log
-				SET intLastID = (select intid from rentallog order by intID desc limit 1,1);
+				SET intLastID = (select intid from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
 			END IF;
+	
 		END IF;
 
+	
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
 	UNTIL intStart = intStop END REPEAT;
-
 END//
 
 DELIMITER ;
