@@ -2134,7 +2134,29 @@ DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
 
+-- GENERATE FAKE DATA --
+DROP PROCEDURE IF EXISTS sp_DELETEInvalidEntries;
+DELIMITER //
+CREATE PROCEDURE sp_DELETEInvalidEntries()
+BEGIN
+	DECLARE intLastID int default 0;
+	DECLARE intStart int default 0;
+	DECLARE intStop int default 0;
+	DECLARE intDuplicateEntry int default 0;
+	
+	-- DELETE MULTIPLE ENTRIES
+    SET intStop = (select count(*) from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
+	SET intStart = 0;
+	REPEAT
+		SET intLastID = (select i.intID from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null limit 1);
+		delete from isnotinstore where intID = intLastID; 
+   		SET intStart = intStart + 1;
+	UNTIL intStart = intStop END REPEAT;
 
+END//
+DELIMITER ;
+
+CALL sp_DELETEInvalidEntries();
 
 
 -- INSERT VIEWS
