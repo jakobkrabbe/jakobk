@@ -127,6 +127,17 @@ FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID ),
 FOREIGN KEY ( intCustomerID ) REFERENCES customers ( intID ),
 FOREIGN KEY ( intStaffID ) REFERENCES staff ( intID )
 );
+-- 10. trigger / log 
+CREATE TABLE rentalLogBackUp (
+intID integer NOT NULL AUTO_INCREMENT, 
+intBackUpID integer ,
+dteCreated datetime , 
+intMovieID integer , 
+intCustomerID integer NOT NULL, 
+intStaffID integer NOT NULL, 
+dteReturned datetime, 
+PRIMARY KEY (intID)
+);
 
 -- 9. vilken film finns "inne"
 CREATE TABLE isNotInStore (
@@ -137,6 +148,17 @@ intRentalLogID integer ,
 PRIMARY KEY (intID),
 FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID )
 );
+
+-- 10. vilken film finns "inne" -- loggen med triggers
+CREATE TABLE isNotInStoreBackUp (
+intID integer NOT NULL AUTO_INCREMENT, 
+intBackUpID integer ,
+dteCreated datetime, 
+intMovieID integer NOT NULL, 
+intRentalLogID integer , 
+PRIMARY KEY (intID)
+);
+
 
 -- INSERT äkta fejt data --
 
@@ -2037,6 +2059,21 @@ insert into movieActor (intMovieID, intActorID) values (148, 119);
 insert into movieActor (intMovieID, intActorID) values (148, 5);
 insert into movieActor (intMovieID, intActorID) values (148, 194);
 
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
+
+DROP TRIGGER IF EXISTS tr_isnotinstoreBackUp;
+DELIMITER //
+CREATE TRIGGER tr_isnotinstoreBackUp
+AFTER UPDATE ON isnotinstore 
+FOR EACH ROW
+BEGIN
+	INSERT INTO isNotInStoreBackUp (intBackUpID, dteCreated, intMovieID, intRentalLogID)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intRentalLogID);
+END//
+DELIMITER ;
+
+
 -- 10. rentalLog (1.000)
 
 -- added dynamic // per date
@@ -2413,7 +2450,5 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
-
-
 
 

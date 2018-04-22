@@ -62,5 +62,5 @@ select @message;
 -- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
 -- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
 
-SELECT * FROM products;
+select * from isNotInStoreBackUp;
 
