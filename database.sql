@@ -2371,6 +2371,48 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
+-- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
+
+DROP PROCEDURE IF EXISTS sp_ReturnMovie;
+DELIMITER //
+CREATE PROCEDURE sp_ReturnMovie(IN intMovieID int, OUT strMessage varchar(200))
+BEGIN
+	DECLARE sp_intMovieID int default intMovieID;
+	DECLARE intAllMovies int default 0;
+	DECLARE intRandomMovie int default 0;
+	DECLARE intIsMovieLate int default 0;
+	DECLARE intMovieLateDays int default 0;
+
+	DECLARE sp_movieTitle varchar(200);
+	DECLARE sp_dteCreated date;
+	DECLARE sp_strCreated varchar(20);
+
+	-- if movieID = 0 then select random movie
+    IF sp_intMovieID = 0 THEN
+    	-- how many movies are not inb the store?
+	    SET intAllMovies = (SELECT COUNT(*) FROM isnotinstore);
+   		-- select random movie
+   		SET sp_intMovieID = FORMAT(RAND()*(intAllMovies -1)+1,0);
+    END IF;
+    
+    -- select name of movie
+    select strName into sp_movieTitle from movies where intID =  sp_intMovieID;
+    -- select date of movie
+    select dteCreated into sp_dteCreated from rentallog where intMovieID = sp_intMovieID;
+
+    	-- check if movie is late
+    SET intIsMovieLate = (select func_isLateByDate (sp_intMovieID));
+   
+	IF intIsMovieLate = 0 THEN
+		-- movie is on time = 0 
+		SET strMessage = concat("Movie is returned on time. Thank you! Name of movie: ", sp_movieTitle);
+	ELSE
+		-- movie is late = 1
+		SET strMessage = concat("Movie is late. We hope you enjoyed it! Name of movie: ", sp_movieTitle);
+    END IF;
+END//
+DELIMITER ;
 
 
 

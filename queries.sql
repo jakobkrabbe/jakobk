@@ -47,17 +47,20 @@ select func_isLateByDate (16);
 -- INSTRUCTIONS:
 -- To find a valid movieID, please run code for "late" and "not late" movies to get ID's to choose from.
 -- is late = 1
-select * from rentallog rl where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day);
+-- select * from rentallog rl where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day);
 -- is not late = 0
-select * from rentallog rl where rl.dteReturned is null and rl.dteCreated >= date_add(current_date(), interval -4 day);
+-- select * from rentallog rl where rl.dteReturned is null and rl.dteCreated >= date_add(current_date(), interval -4 day);
 
 
 -- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
 -- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
-SELECT * FROM products;
+-- 0 = random moies.
+CALL sp_ReturnMovie(0, @message);
+select @message;
 
--- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
 
 SELECT * FROM products;
 
