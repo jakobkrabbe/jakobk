@@ -42,10 +42,18 @@ select  @movieID AS `MOVIE ID`, @movieName AS `MOVIE NAME`, @moviePriceText AS `
 -- sent inlämnad eller inte. Dvs, om du matar in film nr 345 ska du få tillbaka TRUE om filmen är uthyrd men 
 -- borde vara tillbakalämnad, annars FALSE. (1 och 0 funkar också om det är lättare.)
 
-select * FROM isnotinstore order by intID DESC;
+select func_isLateByDate (16);
+
+-- INSTRUCTIONS:
+-- To find a valid movieID, please run code for "late" and "not late" movies to get ID's to choose from.
+-- is late = 1
+select * from rentallog rl where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day);
+-- is not late = 0
+select * from rentallog rl where rl.dteReturned is null and rl.dteCreated >= date_add(current_date(), interval -4 day);
 
 
--- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
+-- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
+-- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
 SELECT * FROM products;
 

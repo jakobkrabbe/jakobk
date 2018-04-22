@@ -2047,8 +2047,8 @@ DROP PROCEDURE IF EXISTS sp_INSERTDefaultEntries;
 DELIMITER //
 CREATE PROCEDURE sp_INSERTDefaultEntries(in sp_loop int)
 BEGIN
-	DECLARE dteCreated datetime default current_timestamp();
-	DECLARE dteReturned datetime default current_timestamp();
+	DECLARE sp_dteCreated datetime default current_timestamp();
+	DECLARE sp_dteReturned datetime default current_timestamp();
 	DECLARE intDaysInterval int default 0;
     DECLARE intDayForEntry int default 0;
     DECLARE intRandomDaysOfRental int default 0;
@@ -2079,15 +2079,15 @@ BEGIN
 		-- select random day for entry
 		SET intDayForEntry = (select FORMAT(RAND()*(intDaysInterval - 1)+1,0));
 		-- set dteCreated for this entry
-        SET dteCreated = date_add(current_date(), interval -intDayForEntry day);
+        SET sp_dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
-        SET intRandomReturnDate = (select FORMAT(RAND()*(7)+1,0));
-        SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
+        SET intRandomReturnDate = (select FORMAT(RAND()*(9)+1,0)); -- slackers don't always return movies on time. (from 1 to 8 days.)
+        SET sp_dteReturned = date_add(sp_dteCreated, interval intRandomReturnDate day);
 
-		-- make sure it's not today or in the future.
-       IF date(dteReturned) > current_date() THEN
-			SET dteReturned = null;
+		-- make sure date of return is not in the future because of obvious reasons!
+       IF date(sp_dteReturned) > current_date() THEN
+			SET sp_dteReturned = null;
 		END IF;
 
 		-- select random movie
@@ -2099,31 +2099,40 @@ BEGIN
 
 		-- check for duplicate entery
 		SET intDuplicateEntry = 0;
-        IF dteReturned IS NOT NULL THEN
+        IF sp_dteReturned IS NOT NULL THEN
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
-            WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
+            WHERE intMovieID = intRandomMovie AND rl.dteCreated BETWEEN sp_dteCreated AND sp_dteReturned );
+			IF intDuplicateEntry = 0 THEN
+				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
+				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, sp_dteReturned );
+                SET intLastID = last_insert_id();
+			END IF;
+		ELSE 
+        -- insert no return date in rental log
+			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
+            WHERE intMovieID = intRandomMovie AND rl.dteCreated > sp_dteCreated );
+			IF intDuplicateEntry = 0 THEN
+				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID ) 
+				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff);
+                SET intLastID = last_insert_id();
+			END IF;
+        
 		END IF;
 
-		IF intDuplicateEntry = 0 THEN
-			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
-			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
-        END IF;
-	
-       IF dteReturned IS NULL THEN
+--		IF sp_dteReturned IS NULL THEN
 			SET intDuplicateEntry = 0;
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
 			IF intDuplicateEntry = 1 THEN
-				-- update log
-				SET intLastID = (select intID from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
-				UPDATE isnotinstore SET dteCreated = dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
+				-- update log ==> change LastID
+				select rl.intID INTO intLastID from rentallog rl, isnotinstore i 
+                WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID order by rl.intID limit 1 ;
+				UPDATE isnotinstore SET dteCreated = sp_dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
 			ELSE
-                -- inset in new log
-				SET intLastID = (select intid from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
-				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+                -- inset in new log ==> use same LastID, as above
+				-- select rl.intID INTO intLastID from rentallog rl, isnotinstore i WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID ;
+				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
 			END IF;
-	
-		END IF;
-
+--		END IF;
 	
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
@@ -2133,31 +2142,6 @@ END//
 DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
-
--- GENERATE FAKE DATA --
-DROP PROCEDURE IF EXISTS sp_DELETEInvalidEntries;
-DELIMITER //
-CREATE PROCEDURE sp_DELETEInvalidEntries()
-BEGIN
-	DECLARE intLastID int default 0;
-	DECLARE intStart int default 0;
-	DECLARE intStop int default 0;
-	DECLARE intDuplicateEntry int default 0;
-	
-	-- DELETE MULTIPLE ENTRIES
-    SET intStop = (select count(*) from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
-	SET intStart = 0;
-	REPEAT
-		SET intLastID = (select i.intID from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null limit 1);
-		delete from isnotinstore where intID = intLastID; 
-   		SET intStart = intStart + 1;
-	UNTIL intStart = intStop END REPEAT;
-
-END//
-DELIMITER ;
-
-CALL sp_DELETEInvalidEntries();
-
 
 -- INSERT VIEWS
 DROP VIEW IF EXISTS view_MoviesInventory;
@@ -2368,6 +2352,26 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- 8. en funktion som kollar om en film finns eller ej
+-- tar en film som parameter och returnerar 1 om den är sen, 0 om allt är i sin ording.alter
+
+DROP FUNCTION IF EXISTS func_isLateByDate;
+DELIMITER //
+CREATE FUNCTION func_isLateByDate ( f_movieID INT ) RETURNS int
+BEGIN
+	DECLARE valReturned int DEFAULT 0;
+	-- 0 is fine. all is good
+    -- 1 is late, not fine. not good.
+	select count(*) into valReturned from rentallog rl 
+		where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day)
+		and intMovieID = f_movieID;
+--    SET valReturned = ABS(valReturned - 1);
+	return valReturned;
+END //
+DELIMITER ;
+
+
 
 
 
