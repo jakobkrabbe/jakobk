@@ -11,6 +11,7 @@ CREATE DATABASE IF NOT EXISTS jakobk;
 
 USE jakobk;
 
+
 -- DROP TABLE IF EXISTS users;
 
 -- 1. priceCategory :: olika priser för olika typer av filmer (5)
