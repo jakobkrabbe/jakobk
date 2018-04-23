@@ -2115,12 +2115,12 @@ BEGIN
 
 	REPEAT
 		-- select random day for entry
-		SET intDayForEntry = (select FORMAT(RAND()*(intDaysInterval - 1)+1,0));
+		SET intDayForEntry = (SELECT FORMAT(RAND()*(intDaysInterval - 1)+1,0));
 		-- set dteCreated for this entry
         SET sp_dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
-        SET intRandomReturnDate = (select FORMAT(RAND()*(9)+1,0)); -- slackers don't always return movies on time. (from 1 to 8 days.)
+        SET intRandomReturnDate = (SELECT FORMAT(RAND()*(9)+1,0)); -- slackers don't always return movies on time. (from 1 to 8 days.)
         SET sp_dteReturned = date_add(sp_dteCreated, interval intRandomReturnDate day);
 
 		-- make sure date of return is not in the future because of obvious reasons!
@@ -2129,23 +2129,22 @@ BEGIN
 		END IF;
 
 		-- select random movie
-   		SET intRandomMovie = FORMAT(RAND()*(intAllMovies -1)+1,0);
+   		SET intRandomMovie = (SELECT FORMAT(RAND()*(intAllMovies -1)+1,0));
         -- select random customer
-   		SET intRandomCustomer = FORMAT(RAND()*(intAllCustomers -1)+1,0);
+   		SET intRandomCustomer = (SELECT FORMAT(RAND()*(intAllCustomers -1)+1,0));
         -- select random staff
-   		SET intRandomStaff = FORMAT(RAND()*(intAllStaff -1)+1,0);
+   		SET intRandomStaff = (SELECT FORMAT(RAND()*(intAllStaff -1)+1,0));
 
 		-- check for duplicate entery
 		SET intDuplicateEntry = 0;
-        IF sp_dteReturned IS NOT NULL THEN
+        IF sp_dteReturned IS NOT NULL THEN -- return date has value
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
             WHERE intMovieID = intRandomMovie AND rl.dteCreated BETWEEN sp_dteCreated AND sp_dteReturned );
 			IF intDuplicateEntry = 0 THEN
 				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
 				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, sp_dteReturned );
-                SET intLastID = last_insert_id();
 			END IF;
-		ELSE 
+		ELSE -- return date IS EMPTY
         -- insert no return date in rental log
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
             WHERE intMovieID = intRandomMovie AND rl.dteCreated > sp_dteCreated );
@@ -2153,28 +2152,14 @@ BEGIN
 				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID ) 
 				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff);
                 SET intLastID = last_insert_id();
-			END IF;
-        
-		END IF;
-
---		IF sp_dteReturned IS NULL THEN
-			SET intDuplicateEntry = 0;
-			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
-			IF intDuplicateEntry = 1 THEN
-				-- update log ==> change LastID
-				select rl.intID INTO intLastID from rentallog rl, isnotinstore i 
-                WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID order by rl.intID limit 1 ;
-				UPDATE isnotinstore SET dteCreated = sp_dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
-			ELSE
-                -- inset in new log ==> use same LastID, as above
-				-- select rl.intID INTO intLastID from rentallog rl, isnotinstore i WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID ;
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
 			END IF;
---		END IF;
-	
+		END IF;
+
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
 	UNTIL intStart = intStop END REPEAT;
+
 END//
 
 DELIMITER ;
@@ -2302,7 +2287,6 @@ ORDER BY `MOST WANTED IN A MONTH` DESC;
 -- skapa en post, isNotInStore (date, intMovieID)
 -- skapa en post, rentalLog (date, intMovieID, intCustomerID, intStaffID)
 -- om fälten är tomma, random! :-)
-
 DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
 DELIMITER //
 CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int, 
@@ -2317,21 +2301,31 @@ OUT out_StaffName varchar(200),
 OUT out_Message varchar(100))
 BEGIN
 
+    DECLARE local_randomID integer default 0;
 	DECLARE local_MovieID int default 0;
     DECLARE local_CustomerID int default 0;
     DECLARE local_StaffID int default 0;
-    DECLARE local_randomID integer default 0;
 	DECLARE local_isForRental integer default 0;
     DECLARE local_lastID integer default 0;
-    -- sp_FakeDays = 0 = new post
-    -- sp_FakeDays = int = 'old' post 'int' days ago.
+    DECLARE intCountMovies integer default 0;
+	DECLARE intStart int default 0;
+	DECLARE intStop int default 0;
+	DECLARE intDuplicateEntry int default 1;
 
--- update code
--- select movie
-    IF sp_MovieID = '0' THEN
-	--	SET local_randomID = (SELECT COUNT(*) FROM movies);
-	--	SET local_MovieID = FORMAT(RAND()*(local_randomID -1)+1,0);
-		SET local_MovieID = (select m.intID FROM movies m left join isnotinstore i ON m.intID = i.intMovieID where i.intID IS NULL LIMIT 1,1);   
+	-- select movie
+    IF sp_MovieID = 0 THEN
+		SET intStop = (SELECT COUNT(*) FROM movies WHERE intID NOT IN (SELECT intID FROM isnotinstore));
+		SET local_randomID = (SELECT COUNT(*) FROM movies);
+        -- loop through all random movies, to find a free movie. 
+		REPEAT
+			SET local_MovieID = (SELECT FORMAT(RAND()*(local_randomID -1)+1,0));
+			SET intDuplicateEntry = (select count(*) from isnotinstore where intMovieID = local_MovieID);
+			IF intDuplicateEntry = 0 THEN
+				SET intStart = intStop;
+			ELSE
+				SET intStart = intStart + 1;
+			END IF;
+		UNTIL intStart = intStop END REPEAT;
     ELSE
 		SET local_MovieID = sp_MovieID;
     END IF;
@@ -2342,17 +2336,17 @@ BEGIN
 	IF local_isForRental = 0 THEN
      
 		-- select customer
-		IF sp_CustomerID = '0' THEN
+		IF sp_CustomerID = 0 THEN
 			SET local_randomID = (SELECT COUNT(*) FROM customers);
-			SET local_CustomerID = FORMAT(RAND()*(local_randomID -1)+1,0);
+			SET local_CustomerID = (SELECT FORMAT(RAND()*(local_randomID -1)+1,0));
 		ELSE
 			SET local_CustomerID = sp_CustomerID;
 		END IF;
     
 -- select staff
-    IF sp_StaffID = '0' THEN
+    IF sp_StaffID = 0 THEN
 		SET local_randomID = (SELECT COUNT(*) FROM staff);
-		SET local_StaffID = FORMAT(RAND()*(local_randomID -1)+1,0);
+		SET local_StaffID = (SELECT FORMAT(RAND()*(local_randomID -1)+1,0));
     ELSE
 		SET local_StaffID = sp_StaffID;
     END IF;
@@ -2360,6 +2354,7 @@ BEGIN
 -- insert log file
 		INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
 		VALUES (current_timestamp(), local_MovieID, local_CustomerID, local_StaffID );
+        
         SET local_lastID = (select intid from rentallog order by intID desc limit 1,1);
 		INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (current_timestamp(), local_MovieID, local_lastID );
         SET local_lastID = (select intid from isnotinstore order by intID desc limit 1,1);
@@ -2385,10 +2380,9 @@ BEGIN
         
 		SET out_Message = "Thank you for choosing MAX VideoRental!";
 	ELSE
-		SET out_Message = "This movie is taken. Please choose another.";
+		SET out_Message = concat("This movie is taken. Please choose another. ID: ", local_MovieID);
     END IF;
 END //
-
 DELIMITER ;
 
 -- 8. en funktion som kollar om en film finns eller ej
