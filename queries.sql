@@ -55,7 +55,7 @@ select func_isLateByDate (16);
 -- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
 -- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
--- 0 = random moies.
+-- 10 = random moies.
 CALL sp_ReturnMovie(0, @message);
 select @message;
 

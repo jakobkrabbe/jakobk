@@ -2073,6 +2073,16 @@ BEGIN
 END//
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS tr_rentalLogBackUp;
+DELIMITER //
+CREATE TRIGGER tr_rentalLogBackUp
+AFTER UPDATE ON rentalLog 
+FOR EACH ROW
+BEGIN
+	INSERT INTO rentalLogBackUp (intBackUpID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intCustomerID, OLD.intStaffID, OLD.dteReturned);
+END//
+DELIMITER ;
 
 -- 10. rentalLog (1.000)
 
@@ -2128,11 +2138,11 @@ BEGIN
 		END IF;
 
 		-- select random movie
-   		SET intRandomMovie = FORMAT(RAND()*(intAllMovies -1)+1,0);
+   		SET intRandomMovie = (SELECT FORMAT(RAND()*(intAllMovies -1)+1,0));
         -- select random customer
-   		SET intRandomCustomer = FORMAT(RAND()*(intAllCustomers -1)+1,0);
+   		SET intRandomCustomer = (SELECT FORMAT(RAND()*(intAllCustomers -1)+1,0));
         -- select random staff
-   		SET intRandomStaff = FORMAT(RAND()*(intAllStaff -1)+1,0);
+   		SET intRandomStaff = (SELECT FORMAT(RAND()*(intAllStaff -1)+1,0));
 
 		-- check for duplicate entery
 		SET intDuplicateEntry = 0;
@@ -2152,25 +2162,21 @@ BEGIN
 				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID ) 
 				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff);
                 SET intLastID = last_insert_id();
+                
+                -- insert isnotinstore
+                set intDuplicateEntry = (select count(*) from isnotinstore i, rentallog rl where
+                i.intMovieID = intRandomMovie and rl.intID = intLastID);
+				if intDuplicateEntry = 1 then
+					-- update log ==> change LastID
+					UPDATE isnotinstore SET dteCreated = sp_dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
+				ELSE
+					-- inset in new log ==> use same LastID, as above
+					-- select rl.intID INTO intLastID from rentallog rl, isnotinstore i WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID ;
+					INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
+				END IF;
 			END IF;
-        
 		END IF;
 
---		IF sp_dteReturned IS NULL THEN
-			SET intDuplicateEntry = 0;
-			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
-			IF intDuplicateEntry = 1 THEN
-				-- update log ==> change LastID
-				select rl.intID INTO intLastID from rentallog rl, isnotinstore i 
-                WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID order by rl.intID limit 1 ;
-				UPDATE isnotinstore SET dteCreated = sp_dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
-			ELSE
-                -- inset in new log ==> use same LastID, as above
-				-- select rl.intID INTO intLastID from rentallog rl, isnotinstore i WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID ;
-				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
-			END IF;
---		END IF;
-	
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
 	UNTIL intStart = intStop END REPEAT;
