@@ -127,6 +127,17 @@ FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID ),
 FOREIGN KEY ( intCustomerID ) REFERENCES customers ( intID ),
 FOREIGN KEY ( intStaffID ) REFERENCES staff ( intID )
 );
+-- 10. trigger / log 
+CREATE TABLE rentalLogBackUp (
+intID integer NOT NULL AUTO_INCREMENT, 
+intBackUpID integer ,
+dteCreated datetime , 
+intMovieID integer , 
+intCustomerID integer NOT NULL, 
+intStaffID integer NOT NULL, 
+dteReturned datetime, 
+PRIMARY KEY (intID)
+);
 
 -- 9. vilken film finns "inne"
 CREATE TABLE isNotInStore (
@@ -137,6 +148,17 @@ intRentalLogID integer ,
 PRIMARY KEY (intID),
 FOREIGN KEY ( intMovieID ) REFERENCES movies ( intID )
 );
+
+-- 10. vilken film finns "inne" -- loggen med triggers
+CREATE TABLE isNotInStoreBackUp (
+intID integer NOT NULL AUTO_INCREMENT, 
+intBackUpID integer ,
+dteCreated datetime, 
+intMovieID integer NOT NULL, 
+intRentalLogID integer , 
+PRIMARY KEY (intID)
+);
+
 
 -- INSERT äkta fejt data --
 
@@ -2037,6 +2059,31 @@ insert into movieActor (intMovieID, intActorID) values (148, 119);
 insert into movieActor (intMovieID, intActorID) values (148, 5);
 insert into movieActor (intMovieID, intActorID) values (148, 194);
 
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
+
+DROP TRIGGER IF EXISTS tr_isnotinstoreBackUp;
+DELIMITER //
+CREATE TRIGGER tr_isnotinstoreBackUp
+AFTER UPDATE ON isnotinstore 
+FOR EACH ROW
+BEGIN
+	INSERT INTO isNotInStoreBackUp (intBackUpID, dteCreated, intMovieID, intRentalLogID)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intRentalLogID);
+END//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS tr_rentalLogBackUp;
+DELIMITER //
+CREATE TRIGGER tr_rentalLogBackUp
+AFTER UPDATE ON rentalLog 
+FOR EACH ROW
+BEGIN
+	INSERT INTO rentalLogBackUp (intBackUpID, dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intCustomerID, OLD.intStaffID, OLD.dteReturned);
+END//
+DELIMITER ;
+
 -- 10. rentalLog (1.000)
 
 -- added dynamic // per date
@@ -2047,8 +2094,8 @@ DROP PROCEDURE IF EXISTS sp_INSERTDefaultEntries;
 DELIMITER //
 CREATE PROCEDURE sp_INSERTDefaultEntries(in sp_loop int)
 BEGIN
-	DECLARE dteCreated datetime default current_timestamp();
-	DECLARE dteReturned datetime default current_timestamp();
+	DECLARE sp_dteCreated datetime default current_timestamp();
+	DECLARE sp_dteReturned datetime default current_timestamp();
 	DECLARE intDaysInterval int default 0;
     DECLARE intDayForEntry int default 0;
     DECLARE intRandomDaysOfRental int default 0;
@@ -2079,28 +2126,34 @@ BEGIN
 		-- select random day for entry
 		SET intDayForEntry = (select FORMAT(RAND()*(intDaysInterval - 1)+1,0));
 		-- set dteCreated for this entry
-        SET dteCreated = date_add(current_date(), interval -intDayForEntry day);
+        SET sp_dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
+<<<<<<< HEAD
         SET intRandomReturnDate = (select FORMAT(RAND()*(7S)+1,0));
         SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
+=======
+        SET intRandomReturnDate = (select FORMAT(RAND()*(9)+1,0)); -- slackers don't always return movies on time. (from 1 to 8 days.)
+        SET sp_dteReturned = date_add(sp_dteCreated, interval intRandomReturnDate day);
+>>>>>>> develop
 
-		-- make sure it's not today or in the future.
-       IF date(dteReturned) > current_date() THEN
-			SET dteReturned = null;
+		-- make sure date of return is not in the future because of obvious reasons!
+       IF date(sp_dteReturned) > current_date() THEN
+			SET sp_dteReturned = null;
 		END IF;
 
 		-- select random movie
-   		SET intRandomMovie = FORMAT(RAND()*(intAllMovies -1)+1,0);
+   		SET intRandomMovie = (SELECT FORMAT(RAND()*(intAllMovies -1)+1,0));
         -- select random customer
-   		SET intRandomCustomer = FORMAT(RAND()*(intAllCustomers -1)+1,0);
+   		SET intRandomCustomer = (SELECT FORMAT(RAND()*(intAllCustomers -1)+1,0));
         -- select random staff
-   		SET intRandomStaff = FORMAT(RAND()*(intAllStaff -1)+1,0);
+   		SET intRandomStaff = (SELECT FORMAT(RAND()*(intAllStaff -1)+1,0));
 
 		-- check for duplicate entery
 		SET intDuplicateEntry = 0;
-        IF dteReturned IS NOT NULL THEN
+        IF sp_dteReturned IS NOT NULL THEN
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
+<<<<<<< HEAD
             WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
 		END IF;
 
@@ -2120,6 +2173,34 @@ BEGIN
                 -- inset in new log
 				SET intLastID = (select intid from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+=======
+            WHERE intMovieID = intRandomMovie AND rl.dteCreated BETWEEN sp_dteCreated AND sp_dteReturned );
+			IF intDuplicateEntry = 0 THEN
+				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
+				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, sp_dteReturned );
+                SET intLastID = last_insert_id();
+			END IF;
+		ELSE 
+        -- insert no return date in rental log
+			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
+            WHERE intMovieID = intRandomMovie AND rl.dteCreated > sp_dteCreated );
+			IF intDuplicateEntry = 0 THEN
+				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID ) 
+				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff);
+                SET intLastID = last_insert_id();
+                
+                -- insert isnotinstore
+                set intDuplicateEntry = (select count(*) from isnotinstore i, rentallog rl where
+                i.intMovieID = intRandomMovie and rl.intID = intLastID);
+				if intDuplicateEntry = 1 then
+					-- update log ==> change LastID
+					UPDATE isnotinstore SET dteCreated = sp_dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
+				ELSE
+					-- inset in new log ==> use same LastID, as above
+					-- select rl.intID INTO intLastID from rentallog rl, isnotinstore i WHERE rl.intMovieID = intRandomMovie AND i.intRentalLogID = rl.intID ;
+					INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
+				END IF;
+>>>>>>> develop
 			END IF;
 	
 		END IF;
@@ -2134,6 +2215,7 @@ DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
 
+<<<<<<< HEAD
 
 -- GENERATE FAKE DATA --
 DROP PROCEDURE IF EXISTS sp_DELETEInvalidEntries;
@@ -2159,6 +2241,8 @@ DELIMITER ;
 -- CALL sp_DELETEInvalidEntries();
 
 
+=======
+>>>>>>> develop
 -- INSERT VIEWS
 DROP VIEW IF EXISTS view_MoviesInventory;
 CREATE VIEW view_MoviesInventory AS 
@@ -2369,5 +2453,65 @@ END //
 
 DELIMITER ;
 
+-- 8. en funktion som kollar om en film finns eller ej
+-- tar en film som parameter och returnerar 1 om den är sen, 0 om allt är i sin ording.alter
+
+DROP FUNCTION IF EXISTS func_isLateByDate;
+DELIMITER //
+CREATE FUNCTION func_isLateByDate ( f_movieID INT ) RETURNS int
+BEGIN
+	DECLARE valReturned int DEFAULT 0;
+	-- 0 is fine. all is good
+    -- 1 is late, not fine. not good.
+	select count(*) into valReturned from rentallog rl 
+		where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day)
+		and intMovieID = f_movieID;
+--    SET valReturned = ABS(valReturned - 1);
+	return valReturned;
+END //
+DELIMITER ;
+
+-- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
+-- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
+
+DROP PROCEDURE IF EXISTS sp_ReturnMovie;
+DELIMITER //
+CREATE PROCEDURE sp_ReturnMovie(IN intMovieID int, OUT strMessage varchar(200))
+BEGIN
+	DECLARE sp_intMovieID int default intMovieID;
+	DECLARE intAllMovies int default 0;
+	DECLARE intRandomMovie int default 0;
+	DECLARE intIsMovieLate int default 0;
+	DECLARE intMovieLateDays int default 0;
+
+	DECLARE sp_movieTitle varchar(200);
+	DECLARE sp_dteCreated date;
+	DECLARE sp_strCreated varchar(20);
+
+	-- if movieID = 0 then select random movie
+    IF sp_intMovieID = 0 THEN
+    	-- how many movies are not inb the store?
+	    SET intAllMovies = (SELECT COUNT(*) FROM isnotinstore);
+   		-- select random movie
+   		SET sp_intMovieID = FORMAT(RAND()*(intAllMovies -1)+1,0);
+    END IF;
+    
+    -- select name of movie
+    select strName into sp_movieTitle from movies where intID =  sp_intMovieID;
+    -- select date of movie
+    select dteCreated into sp_dteCreated from rentallog where intMovieID = sp_intMovieID;
+
+    	-- check if movie is late
+    SET intIsMovieLate = (select func_isLateByDate (sp_intMovieID));
+   
+	IF intIsMovieLate = 0 THEN
+		-- movie is on time = 0 
+		SET strMessage = concat("Movie is returned on time. Thank you! Name of movie: ", sp_movieTitle);
+	ELSE
+		-- movie is late = 1
+		SET strMessage = concat("Movie is late. We hope you enjoyed it! Name of movie: ", sp_movieTitle);
+    END IF;
+END//
+DELIMITER ;
 
 

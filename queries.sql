@@ -38,16 +38,29 @@ select  @movieID AS `MOVIE ID`, @movieName AS `MOVIE NAME`, @moviePriceText AS `
 @message AS MESSAGE;
 
 
--- Fråga 8: Gör en funktion som tar en film som parameter och returnerar olika värden beroende på om filmen är sent inlämnad eller inte. Dvs, om du matar in film nr 345 ska du få tillbaka TRUE om filmen är uthyrd men borde vara tillbakalämnad, annars FALSE. (1 och 0 funkar också om det är lättare.)
+-- Fråga 8: Gör en funktion som tar en film som parameter och returnerar olika värden beroende på om filmen är 
+-- sent inlämnad eller inte. Dvs, om du matar in film nr 345 ska du få tillbaka TRUE om filmen är uthyrd men 
+-- borde vara tillbakalämnad, annars FALSE. (1 och 0 funkar också om det är lättare.)
 
-select * FROM isnotinstore order by intID DESC;
+select func_isLateByDate (16);
+
+-- INSTRUCTIONS:
+-- To find a valid movieID, please run code for "late" and "not late" movies to get ID's to choose from.
+-- is late = 1
+-- select * from rentallog rl where rl.dteReturned is null and rl.dteCreated < date_add(current_date(), interval -4 day);
+-- is not late = 0
+-- select * from rentallog rl where rl.dteReturned is null and rl.dteCreated >= date_add(current_date(), interval -4 day);
 
 
--- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
+-- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
+-- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
-SELECT * FROM products;
+-- 10 = random moies.
+CALL sp_ReturnMovie(0, @message);
+select @message;
 
--- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
 
-SELECT * FROM products;
+select * from isNotInStoreBackUp;
 
