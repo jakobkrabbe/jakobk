@@ -2120,8 +2120,13 @@ BEGIN
         SET sp_dteCreated = date_add(current_date(), interval -intDayForEntry day);
 	
 		-- set dteReturned
+<<<<<<< HEAD
         SET intRandomReturnDate = (SELECT FORMAT(RAND()*(9)+1,0)); -- slackers don't always return movies on time. (from 1 to 8 days.)
         SET sp_dteReturned = date_add(sp_dteCreated, interval intRandomReturnDate day);
+=======
+        SET intRandomReturnDate = (select FORMAT(RAND()*(7S)+1,0));
+        SET dteReturned = date_add(dteCreated, interval intRandomReturnDate day);
+>>>>>>> ccbe5ff78cb8ecff38370e0d8d8e43a47f60a3b3
 
 		-- make sure date of return is not in the future because of obvious reasons!
        IF date(sp_dteReturned) > current_date() THEN
@@ -2139,6 +2144,7 @@ BEGIN
 		SET intDuplicateEntry = 0;
         IF sp_dteReturned IS NOT NULL THEN -- return date has value
 			SET intDuplicateEntry = (SELECT COUNT(*) FROM rentallog rl 
+<<<<<<< HEAD
             WHERE intMovieID = intRandomMovie AND rl.dteCreated BETWEEN sp_dteCreated AND sp_dteReturned );
 			IF intDuplicateEntry = 0 THEN
 				INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
@@ -2153,19 +2159,69 @@ BEGIN
 				VALUES (sp_dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff);
                 SET intLastID = last_insert_id();
 				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (sp_dteCreated, intRandomMovie, intLastID );
-			END IF;
+=======
+            WHERE intMovieID = intRandomMovie AND dteCreated  BETWEEN dteCreated AND dteReturned );
 		END IF;
 
+		IF intDuplicateEntry = 0 THEN
+			INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned ) 
+			VALUES (dteCreated, intRandomMovie, intRandomCustomer, intRandomStaff, dteReturned );
+        END IF;
+	
+       IF dteReturned IS NULL THEN
+			SET intDuplicateEntry = 0;
+			SET intDuplicateEntry = (SELECT COUNT(*) FROM isnotinstore WHERE intMovieID = intRandomMovie );
+			IF intDuplicateEntry = 1 THEN
+				-- update log
+				SET intLastID = (select intID from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
+				UPDATE isnotinstore SET dteCreated = dteCreated, intRentalLogID = intLastID WHERE intMovieID = intRandomMovie;
+			ELSE
+                -- inset in new log
+				SET intLastID = (select intid from rentallog WHERE dteReturned is null order by intID desc limit 1,1);
+				INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (dteCreated, intRandomMovie, intLastID );
+>>>>>>> ccbe5ff78cb8ecff38370e0d8d8e43a47f60a3b3
+			END IF;
+	
+		END IF;
+
+	
 		SET intDuplicateEntry = 0;
    		SET intStart = intStart + 1;
 	UNTIL intStart = intStop END REPEAT;
-
 END//
 
 DELIMITER ;
 
 CALL sp_INSERTDefaultEntries(3000);
 
+<<<<<<< HEAD
+=======
+
+-- GENERATE FAKE DATA --
+DROP PROCEDURE IF EXISTS sp_DELETEInvalidEntries;
+DELIMITER //
+CREATE PROCEDURE sp_DELETEInvalidEntries()
+BEGIN
+	DECLARE intStart int default 0;
+	DECLARE intStop int default 0;
+	DECLARE intDuplicateEntry int default 0;
+	
+	-- DELETE MULTIPLE ENTRIES
+    SET intStop = (select * from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
+	SET intStart = 0;
+	REPEAT
+		SET intLastID = (select i.intID from isnotinstore i, rentallog rl where i.intRentalLogID = rl.intID and rl.dteReturned is not null);
+		-- delete from isnotinstore where intID = intLastID; 
+   		SET intStart = intStart + 1;
+	UNTIL intStart = intStop END REPEAT;
+
+END//
+DELIMITER ;
+
+-- CALL sp_DELETEInvalidEntries();
+
+
+>>>>>>> ccbe5ff78cb8ecff38370e0d8d8e43a47f60a3b3
 -- INSERT VIEWS
 DROP VIEW IF EXISTS view_MoviesInventory;
 CREATE VIEW view_MoviesInventory AS 
