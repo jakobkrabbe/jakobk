@@ -86,7 +86,7 @@ strPassword varchar(50) NOT NULL,
 PRIMARY KEY (intID)
 );
 
---  7. movie :: alla filmerna (300)
+-- 7. movie :: alla filmerna (300)
 -- https://mockaroo.com/8040d340
 CREATE TABLE movies (
 intID integer NOT NULL AUTO_INCREMENT, 
@@ -2333,7 +2333,7 @@ BEGIN
 
 -- update code
 -- select movie
-    IF sp_MovieID = '0' THEN
+    IF sp_MovieID = 0 THEN
 	--	SET local_randomID = (SELECT COUNT(*) FROM movies);
 	--	SET local_MovieID = FORMAT(RAND()*(local_randomID -1)+1,0);
 		SET local_MovieID = (select m.intID FROM movies m left join isnotinstore i ON m.intID = i.intMovieID where i.intID IS NULL LIMIT 1,1);   
@@ -2347,7 +2347,7 @@ BEGIN
 	IF local_isForRental = 0 THEN
      
 		-- select customer
-		IF sp_CustomerID = '0' THEN
+		IF sp_CustomerID = 0 THEN
 			SET local_randomID = (SELECT COUNT(*) FROM customers);
 			SET local_CustomerID = FORMAT(RAND()*(local_randomID -1)+1,0);
 		ELSE
@@ -2355,7 +2355,7 @@ BEGIN
 		END IF;
     
 -- select staff
-    IF sp_StaffID = '0' THEN
+    IF sp_StaffID = 0 THEN
 		SET local_randomID = (SELECT COUNT(*) FROM staff);
 		SET local_StaffID = FORMAT(RAND()*(local_randomID -1)+1,0);
     ELSE
