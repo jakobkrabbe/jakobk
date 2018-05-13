@@ -9,18 +9,15 @@ SELECT * FROM view_MoviesInventory;
 
 -- Fråga 2: Vilka filmer som finns i en viss genre.
 
-SELECT * FROM view_genreV1;
-SELECT * FROM view_genreV2;
+SELECT * FROM view_genre;
 
 -- Fråga 3: Vilka filmer som är uthyrda, vem som hyrde dem (kund) och vem som hyrde ut dem (anställd).
 
 SELECT * FROM view_rentalLog;
-SELECT * FROM view_rentalLogDATE;
 
 -- Fråga 4: Vilka filmer som har gått över tiden, dvs filmer som inte har blivit återlämnade trots att de borde vara det, tillsammans med namnet på kunden som har hyrt den.
 
-SELECT * FROM view_LateMoviesALL_LOG;
-SELECT * FROM view_LateMoviesDATE;
+SELECT * FROM view_LateMovies;
 
 -- Fråga 5: En lista över alla anställda och hur många filmer varje anställd har hyrt ut.
 
