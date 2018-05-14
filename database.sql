@@ -441,3 +441,50 @@ SELECT s.strName AS `STAFF / EMPLOYER`,
 (SELECT COUNT(*) AS MoviesPerStaff FROM rentallog rl WHERE rl.intStaffID = s.intID  ) AS `MOVIE PER STAFF MEMBER` 
 FROM staff s
 ORDER BY `MOVIE PER STAFF MEMBER` DESC;
+
+-- Fråga 6: En lista med statistik över de mest uthyrda filmerna den senaste månaden. Se fråga 10.
+
+DROP VIEW IF EXISTS view_MostWantedMovies;
+CREATE VIEW view_MostWantedMovies AS 
+SELECT m.strName AS `MOVIE NAME`,
+(SELECT GROUP_CONCAT(DATE(rl.dteCreated)) FROM rentalLog rl
+WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add('2018-05-13', INTERVAL -1 MONTH) AND '2018-05-13')
+) AS `DATE OF RENTAL`,
+(SELECT COUNT(rl.intID)  FROM rentalLog rl
+WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add('2018-05-13', INTERVAL -1 MONTH) AND '2018-05-13')
+) AS `MOST WANTED IN A MONTH`
+FROM rentallog rl
+JOIN movies m ON rl.intMovieID = m.intID
+WHERE rl.dteCreated BETWEEN date_add('2018-05-13', INTERVAL -1 MONTH) AND '2018-05-13'
+GROUP BY m.strName
+ORDER BY `MOST WANTED IN A MONTH` DESC;
+
+-- Fråga 7: En Stored Procedure som ska köras när en film lämnas ut. Ska alltså sätta filmen till uthyrd, vem som hyrt den osv.
+
+DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
+DELIMITER //
+CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int, 
+OUT out_Message varchar(100))
+BEGIN
+
+	DECLARE local_MovieID int default 0;
+    DECLARE local_CustomerID int default 0;
+    DECLARE local_StaffID int default 0;
+    DECLARE local_lastID int default 0;
+    -- sp_FakeDays = 0 = new post
+    -- sp_FakeDays = int = 'old' post 'int' days ago.
+
+	set local_MovieID = sp_MovieID;
+	set local_CustomerID = sp_MovieID;
+	set local_StaffID = sp_MovieID;
+
+	-- insert log file
+	INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+	VALUES (current_date(), local_MovieID, local_CustomerID, local_StaffID );
+    SET local_lastID = (select intid from rentallog order by intID desc limit 1,1);
+	INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (current_date(), local_MovieID, local_lastID );
+       
+	SET out_Message = "Thank you for choosing MAX Video Rental!";
+END //
+DELIMITER ;
+
