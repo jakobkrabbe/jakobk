@@ -2,11 +2,6 @@
 
 DROP DATABASE IF EXISTS jakobk;
 
-CREATE DATABASE IF NOT EXISTS jakobk;
-
-USE jakobk;
-
-
 
 -- MySQL Workbench Forward Engineering
 
@@ -319,11 +314,11 @@ value ('2018-05-07', '3','3','2');
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID) 
 value ('2018-05-06', '4','1','2');
 
-insert into isNotInStore (intMovieID, intRentalLogID) value (1, 1);
-insert into isNotInStore (intMovieID, intRentalLogID) value (2, 2);
+insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-11', 1, 1);
+insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-12', 2, 2);
 
-insert into isNotInStore (intMovieID, intRentalLogID) value (3, 3);
-insert into isNotInStore (intMovieID, intRentalLogID) value (4, 4);
+insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-07', 3, 3);
+insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-06', 4, 4);
 
 
 
@@ -363,14 +358,15 @@ ORDER BY rl.dteCreated, m.strName;
 
 
 -- 4. vilka filmer har gått över tiden. vilka har inte blivit återlämnade.
-DROP VIEW IF EXISTS view_LateMoviesALL_LOG;
-CREATE VIEW view_LateMoviesALL_LOG AS 
-SELECT m.strName AS `MOVIE NAME`, CONCAT(c.strFirstName, ' ', c.strLastName) AS CUSTOMER,
-CONCAT(s.strFirstName, ' ', s.strLastName) AS STAFF,  DATE(rl.dteCreated) AS CREATED,
-DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS RETURNED 
+
+DROP VIEW IF EXISTS view_LateMovies;
+CREATE VIEW view_LateMovies AS 
+SELECT m.intID AS `ID`, m.strName AS `MOVIE NAME`, c.strName AS CUSTOMER,
+s.strName AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
+DATE_ADD(rl.dteCreated, INTERVAL 4 DAY) AS `DATE OF RETURN`, DATE(rl.dteReturned) AS `RETURNED` 
 FROM rentalLog rl
 JOIN staff s ON rl.intStaffID = s.intID
 JOIN customers c ON rl.intCustomerID = c.intID
 JOIN movies m ON rl.intMovieID = m.intID
-WHERE rl.dteReturned NOT BETWEEN rl.dteCreated AND date_add(rl.dteCreated, interval 4 day)
-ORDER BY m.strName;
+where date_add(rl.dteCreated, interval 4 day) < '2018-05-13';
+
