@@ -304,6 +304,8 @@ insert into movieActor (intMovieID, intActorID) value ('15','9');
 insert into movieActor (intMovieID, intActorID) value ('16','10');
 insert into movieActor (intMovieID, intActorID) value ('17','11');
 
+
+-- TODAY = 2018-05-13
 -- 3. prepare data, insert fake log
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID) 
 value ('2018-05-11', '1','1','1');
@@ -471,8 +473,6 @@ BEGIN
     DECLARE local_CustomerID int default 0;
     DECLARE local_StaffID int default 0;
     DECLARE local_lastID int default 0;
-    -- sp_FakeDays = 0 = new post
-    -- sp_FakeDays = int = 'old' post 'int' days ago.
 
 	set local_MovieID = sp_MovieID;
 	set local_CustomerID = sp_MovieID;
@@ -488,3 +488,32 @@ BEGIN
 END //
 DELIMITER ;
 
+-- 8. en funktion som kollar om en film finns eller ej
+-- tar en film som parameter och returnerar 1 om den är sen, 0 om allt är i sin ording.alter
+
+DROP FUNCTION IF EXISTS func_isLateByDate;
+DELIMITER //
+CREATE FUNCTION func_isLateByDate ( f_movieID INT ) RETURNS int
+BEGIN
+	DECLARE local_intRentalLogID int DEFAULT 0;
+	DECLARE local_dteCreated date;
+	DECLARE valDateDiff int DEFAULT 0;
+	-- 0 is fine. all is good
+    -- 1 is late, not fine. not good.
+    
+    -- GET ID FOR LOG.
+	select intRentalLogID into local_intRentalLogID from isnotinstore where intMovieID = f_movieID;
+	IF local_intRentalLogID >= 1 THEN
+		select rl.dteCreated into local_dteCreated from rentallog rl where intID = local_intRentalLogID;
+        
+        IF date_add(local_dteCreated, interval 4 day) > '2018-05-13' THEN
+			return 0;
+		ELSE
+			return 1;
+		END IF;
+	ELSE 
+		-- no movie met the criteria
+        return 2;
+    END IF;
+END //
+DELIMITER ;

@@ -29,18 +29,30 @@ SELECT * FROM view_MostWantedMovies;
 
 -- Fråga 7: En Stored Procedure som ska köras när en film lämnas ut. Ska alltså sätta filmen till uthyrd, vem som hyrt den osv.
 
-CALL sp_MarkMovieAsRented(0,0,0, @movieID, @movieName, @moviePriceText, @moviePrice, @dayOfRental, @dayOfReturn, @customer, @staff, @message);
+-- intMovieID = 1-20
+-- intCustomerID = 1-7
+-- intStaffID = 1-2
+CALL sp_MarkMovieAsRented(2,2,2, @message);
 
-select  @movieID AS `MOVIE ID`, @movieName AS `MOVIE NAME`, @moviePriceText AS `PRICING NAME`, @moviePrice AS `PRICE IN $`, 
-@dayOfRental AS `DAY OF RENTAL`, @dayOfReturn AS `DAY OF RETURN`, @customer AS `CUSTOMER`, @staff AS `STAFF`,
-@message AS MESSAGE;
+select @message AS `MESSAGE`;
 
 
 -- Fråga 8: Gör en funktion som tar en film som parameter och returnerar olika värden beroende på om filmen är 
 -- sent inlämnad eller inte. Dvs, om du matar in film nr 345 ska du få tillbaka TRUE om filmen är uthyrd men 
 -- borde vara tillbakalämnad, annars FALSE. (1 och 0 funkar också om det är lättare.)
+    -- 1 is late, not fine. not good.
+	-- 0 is fine. all is good
+-- movie ID #1 = 1, is fine
+-- movie ID #4 = should be returned
 
-select func_isLateByDate (16);
+select * from isnotinstore i , rentallog rl where rl.intID = i.intRentalLogID; 
+select func_isLateByDate (1); -- FALSE. Movie is out but not late
+select func_isLateByDate (2); -- FALSE. Movie is out but not late
+select func_isLateByDate (3); -- TRUE. Movie is out but late for return.
+select func_isLateByDate (4); -- TRUE. Movie is out but late for return.
+select func_isLateByDate (5); -- not found = 2
+
+
 
 -- INSTRUCTIONS:
 -- To find a valid movieID, please run code for "late" and "not late" movies to get ID's to choose from.
@@ -53,8 +65,22 @@ select func_isLateByDate (16);
 -- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
 -- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
 
--- 0 = random moies.
-CALL sp_ReturnMovie(0, @message);
+select * from isnotinstore i , rentallog rl where rl.intID = i.intRentalLogID; 
+select func_isLateByDate (1); -- FALSE. Movie is out but not late
+select func_isLateByDate (2); -- FALSE. Movie is out but not late
+select func_isLateByDate (3); -- TRUE. Movie is out but late for return.
+select func_isLateByDate (4); -- TRUE. Movie is out but late for return.
+select func_isLateByDate (5); -- not found = 2
+
+
+
+CALL sp_ReturnMovie(1, @message);
+select @message;
+CALL sp_ReturnMovie(2, @message);
+select @message;
+CALL sp_ReturnMovie(3, @message);
+select @message;
+CALL sp_ReturnMovie(4, @message);
 select @message;
 
 -- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
