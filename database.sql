@@ -389,6 +389,20 @@ value ('2018-04-22', '14','5','2','2018-04-26');
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned) 
 value ('2018-04-22', '15','7','2','2018-04-26');
 
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
+
+DROP TRIGGER IF EXISTS tr_isnotinstoreBackUp;
+DELIMITER //
+CREATE TRIGGER tr_isnotinstoreBackUp
+AFTER DELETE ON isnotinstore 
+FOR EACH ROW
+BEGIN
+	INSERT INTO isNotInStoreBackUp (intBackUpID, dteCreated, intMovieID, intRentalLogID)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intRentalLogID);
+END//
+DELIMITER ;
+
 
 -- Fråga 1: Vilka filmer som firman äger, inklusive data om filmen.
 DROP VIEW IF EXISTS view_MoviesInventory;
@@ -517,3 +531,37 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+
+-- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
+-- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
+
+DROP PROCEDURE IF EXISTS sp_ReturnMovie;
+DELIMITER //
+CREATE PROCEDURE sp_ReturnMovie(IN intMovieID int, OUT strMessage varchar(200))
+BEGIN
+	DECLARE sp_intMovieID int default 0;
+	DECLARE sp_rentalLogID int default 0;
+	DECLARE intIsMovieLate int default 0;
+    
+    SET sp_intMovieID = intMovieID;
+    SET intIsMovieLate = func_isLateByDate(sp_intMovieID);
+    
+    IF intIsMovieLate <= 1 THEN
+		-- GET ID FOR LOG
+        SELECT i.intRentalLogID INTO sp_rentalLogID from isnotinstore i WHERE i.intMovieID = sp_intMovieID;
+        -- UPDATE LOG
+        UPDATE rentallog rl SET rl.dteReturned = '2018-05-13' WHERE rl.intID = sp_rentalLogID;
+        -- DELETE IS NOT IN STORE
+        DELETE FROM isnotinstore  WHERE isnotinstore.intMovieID = sp_intMovieID;
+    END IF;
+
+    IF intIsMovieLate = 0 THEN
+		SET strMessage = CONCAT('FALSE. Movie is out but not late. = ', intIsMovieLate);
+    ELSEIF intIsMovieLate = 1 THEN
+		SET strMessage = CONCAT('TRUE. Movie is out but late for return. = ', intIsMovieLate);
+	ELSE
+		SET strMessage = CONCAT('Movie not found. No changes are made.', intIsMovieLate);
+	END IF;
+END//
+DELIMITER ;
+
