@@ -1019,7 +1019,7 @@ GROUP BY m.strName ORDER BY m.strName;
 -- Fråga 2: Vilka filmer som finns i en viss genre.
 DROP VIEW IF EXISTS view_genre;
 CREATE VIEW view_genre AS 
-SELECT m.strGenre AS GENRE, COUNT(m.strName) AS `NR OF MOVIES`, GROUP_CONCAT(m.strName) AS `NAME OF MOVIE` 
+SELECT m.strGenre AS GENRE, COUNT(m.strName) AS `NR OF MOVIES`, GROUP_CONCAT('ID:', m.intID, ' ', m.strName) AS `NAME OF MOVIE` 
 FROM movies m
 GROUP BY m.strGenre ORDER BY `NR OF MOVIES` DESC;
 
