@@ -21,7 +21,7 @@ SELECT * FROM view_LateMovies;
 
 -- Fråga 5: En lista över alla anställda och hur många filmer varje anställd har hyrt ut.
 
-SELECT * FROM view_MoviesPerStaffALL_LOG;
+SELECT * FROM view_MoviesPerStaff;
 
 -- Fråga 6: En lista med statistik över de mest uthyrda filmerna den senaste månaden. Se fråga 10.
 

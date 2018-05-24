@@ -219,6 +219,7 @@ insert into directors (strName) value ('Arne Anka');
 insert into staff (strName, strEmail, strPassword) value ('Urban Olson', 'urban@gmail.com', '123');
 insert into staff (strName, strEmail, strPassword) value ('Anna Stensson', 'anna@gmail.com', '456');
 
+-- customers (7)
 insert into customers (strName, strEmail, strPassword) value ('Petra Nilsson', 'petra@gmail.com', '123');
 insert into customers (strName, strEmail, strPassword) value ('Sara Molander', 'sara@gmail.com', '123');
 insert into customers (strName, strEmail, strPassword) value ('Bryan Adams', 'bryan@gmail.com', '123');
@@ -227,6 +228,7 @@ insert into customers (strName, strEmail, strPassword) value ('Ingrid Nilsson', 
 insert into customers (strName, strEmail, strPassword) value ('Petra Marklund', 'september@gmail.com', '123');
 insert into customers (strName, strEmail, strPassword) value ('Bruce Willis', 'bruce@gmail.com', '123');
 
+-- insert movies (20)
 insert into movies (strName, strYear, intPrice, intDirectorID, strGenre, intLength, strDescription) value
 ('Hela havet stormar', 1980, 49, 1, 'Humor', 90, 'En helt vanlig dat på arbetet. Vad kan gå fel? Ja, det är mycket ska det visa sig!');
 insert into movies (strName, strYear, intPrice, intDirectorID, strGenre, intLength, strDescription) value
@@ -299,8 +301,6 @@ insert into movieActor (intMovieID, intActorID) value ('16','10');
 insert into movieActor (intMovieID, intActorID) value ('17','11');
 
 -- 3. prepare data, insert fake log
-
-
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-11', '1','1','1');
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
@@ -316,8 +316,72 @@ insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-0
 insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-07', 3, 3);
 insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-06', 4, 4);
 
+-- 5. prepare data, insert fake log
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-01', '1','1','1','2018-04-05');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-02', '2','2','1','2018-04-06');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-03', '3','3','1','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-04', '4','4','1','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-05', '5','4','1','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-06', '6','5','1','2018-04-10');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-07', '1','1','1','2018-04-12');
+
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-01', '7','7','2','2018-04-05');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-02', '8','5','2','2018-04-06');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-03', '9','6','2','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-04', '10','4','2','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-05', '11','4','2','2018-04-09');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-06', '12','5','2','2018-04-10');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-07', '13','7','2','2018-04-12');
 
 
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-15', '1','1','1','2018-04-19');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-16', '2','2','1','2018-04-22');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-17', '3','3','1','2018-04-28');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-18', '4','4','1','2018-04-20');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-15', '5','4','1','2018-04-20');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-16', '6','5','1','2018-04-18');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-17', '1','1','1','2018-04-21');
+
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-15', '7','7','2','2018-04-19');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-16', '8','5','2','2018-04-19');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-17', '9','6','2','2018-04-19');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-15', '10','4','2','2018-04-18');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-16', '11','4','2','2018-04-20');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-17', '12','5','2','2018-04-20');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-18', '13','7','2','2018-04-22');
+
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-22', '14','5','2','2018-04-26');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+value ('2018-04-22', '15','7','2','2018-04-26');
 
 
 -- Fråga 1: Vilka filmer som firman äger, inklusive data om filmen.
@@ -367,3 +431,11 @@ JOIN movies m ON rl.intMovieID = m.intID
 WHERE rl.dteReturned NOT BETWEEN rl.dteCreated AND date_add(rl.dteCreated, interval 4 day)
 ORDER BY m.strName;
 where date_add(rl.dteCreated, interval 4 day) < '2018-05-13';
+
+-- 5. lista över alla anställda och hur många filmer de har hyrt ut.
+DROP VIEW IF EXISTS view_MoviesPerStaff;
+CREATE VIEW view_MoviesPerStaff AS
+SELECT s.strName AS `STAFF / EMPLOYER`,
+(SELECT COUNT(*) AS MoviesPerStaff FROM rentallog rl WHERE rl.intStaffID = s.intID  ) AS `MOVIE PER STAFF MEMBER`
+FROM staff s
+ORDER BY `MOVIE PER STAFF MEMBER` DESC;
