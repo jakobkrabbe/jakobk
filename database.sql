@@ -446,7 +446,7 @@ JOIN customers c ON rl.intCustomerID = c.intID
 JOIN movies m ON rl.intMovieID = m.intID
 WHERE rl.dteReturned NOT BETWEEN rl.dteCreated AND date_add(rl.dteCreated, interval 4 day)
 ORDER BY m.strName;
-where date_add(rl.dteCreated, interval 4 day) < '2018-05-13';
+
 
 -- 5. lista över alla anställda och hur många filmer de har hyrt ut.
 DROP VIEW IF EXISTS view_MoviesPerStaff;
