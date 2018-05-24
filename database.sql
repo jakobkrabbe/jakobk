@@ -997,9 +997,16 @@ insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-11', '1','1','1');
 insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID) 
 value ('2018-05-12', '2','2','2');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+value ('2018-05-07', '3','3','2');
+insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+value ('2018-05-06', '4','1','2');
 
 insert into isNotInStore (intMovieID, intRentalLogID) value (1, 1);
 insert into isNotInStore (intMovieID, intRentalLogID) value (2, 2);
+
+insert into isNotInStore (intMovieID, intRentalLogID) value (3, 3);
+insert into isNotInStore (intMovieID, intRentalLogID) value (4, 4);
 
 
 
