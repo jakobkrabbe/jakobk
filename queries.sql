@@ -64,23 +64,18 @@ select func_isLateByDate (5); -- not found = 2
 
 -- Fråga 9: En Stored Procedure som ska köras när en film lämnas tillbaka. Den ska använda sig av
 -- ovanstående funktion för att göra någon form av markering/utskrift om filmen är återlämnad för sent.
-
+select * from isnotinstore;
+select * from rentallog;
 select * from isnotinstore i , rentallog rl where rl.intID = i.intRentalLogID;
-select func_isLateByDate (1); -- FALSE. Movie is out but not late
-select func_isLateByDate (2); -- FALSE. Movie is out but not late
-select func_isLateByDate (3); -- TRUE. Movie is out but late for return.
-select func_isLateByDate (4); -- TRUE. Movie is out but late for return.
-select func_isLateByDate (5); -- not found = 2
-
-
-
-CALL sp_ReturnMovie(1, @message);
+CALL sp_ReturnMovie(1, @message); -- FALSE. Movie is out but not late.
 select @message;
-CALL sp_ReturnMovie(2, @message);
+CALL sp_ReturnMovie(2, @message); -- FALSE. Movie is out but not late.
 select @message;
-CALL sp_ReturnMovie(3, @message);
+CALL sp_ReturnMovie(3, @message); -- TRUE. Movie is out but late for return.
 select @message;
-CALL sp_ReturnMovie(4, @message);
+CALL sp_ReturnMovie(4, @message); -- TRUE. Movie is out but late for return.
+select @message;
+CALL sp_ReturnMovie(5, @message); -- Not found = 2. No changes are made.
 select @message;
 
 -- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering
