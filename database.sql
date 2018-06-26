@@ -271,7 +271,7 @@ insert into movies (strname, stryear, intprice, intdirectorid, strgenre, intleng
 ('inget att förlora', 1986, 49, 7, 'komedi', 210, 'en gång förirrade sig en man i ett köpcenter.');
 
 
-insert into  (intmovieid, intactorid) value ('1','1');
+insert into movieactor (intmovieid, intactorid) value ('1','1');
 insert into movieactor (intmovieid, intactorid) value ('1','2');
 insert into movieactor (intmovieid, intactorid) value ('2','1');
 insert into movieactor (intmovieid, intactorid) value ('2','2');
