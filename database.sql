@@ -134,13 +134,13 @@ CREATE TABLE IF NOT EXISTS `jakobk`.`isnotinstore` (
   `intID` INT(11) NOT NULL AUTO_INCREMENT,
   `dteCreated` DATE NULL DEFAULT NULL,
   `intMovieID` INT(11) NOT NULL,
-  `intRentalLogID` INT(11) NOT NULL,
+  `intrentallogID` INT(11) NOT NULL,
   PRIMARY KEY (`intID`),
   UNIQUE INDEX `intID_UNIQUE` (`intID` ASC),
-  INDEX `fk_isnotinstore_rentallog1_idx` (`intRentalLogID` ASC),
+  INDEX `fk_isnotinstore_rentallog1_idx` (`intrentallogID` ASC),
   INDEX `fk_isnotinstore_movies1_idx` (`intMovieID` ASC),
   CONSTRAINT `fk_isnotinstore_rentallog1`
-    FOREIGN KEY (`intRentalLogID`)
+    FOREIGN KEY (`intrentallogID`)
     REFERENCES `jakobk`.`rentallog` (`intID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `jakobk`.`isnotinstorebackup` (
   `intBackUpID` INT(11) NULL DEFAULT NULL,
   `dteCreated` DATE NULL DEFAULT NULL,
   `intMovieID` INT(11) NULL DEFAULT NULL,
-  `intRentalLogID` INT(11) NULL DEFAULT NULL,
+  `intrentallogID` INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (`intID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -271,131 +271,131 @@ insert into movies (strName, strYear, intPrice, intDirectorID, strGenre, intLeng
 ('Inget att förlora', 1986, 49, 7, 'Komedi', 210, 'En gång förirrade sig en man i ett köpcenter.');
 
 
-insert into movieActor (intMovieID, intActorID) value ('1','1');
-insert into movieActor (intMovieID, intActorID) value ('1','2');
-insert into movieActor (intMovieID, intActorID) value ('2','1');
-insert into movieActor (intMovieID, intActorID) value ('2','2');
-insert into movieActor (intMovieID, intActorID) value ('3','3');
-insert into movieActor (intMovieID, intActorID) value ('3','4');
-insert into movieActor (intMovieID, intActorID) value ('3','5');
-insert into movieActor (intMovieID, intActorID) value ('4','3');
-insert into movieActor (intMovieID, intActorID) value ('4','4');
-insert into movieActor (intMovieID, intActorID) value ('4','5');
-insert into movieActor (intMovieID, intActorID) value ('5','6');
-insert into movieActor (intMovieID, intActorID) value ('5','7');
-insert into movieActor (intMovieID, intActorID) value ('6','6');
-insert into movieActor (intMovieID, intActorID) value ('6','7');
-insert into movieActor (intMovieID, intActorID) value ('7','8');
-insert into movieActor (intMovieID, intActorID) value ('8','8');
-insert into movieActor (intMovieID, intActorID) value ('9','8');
+insert into  (intMovieID, intActorID) value ('1','1');
+insert into movieactor (intMovieID, intActorID) value ('1','2');
+insert into movieactor (intMovieID, intActorID) value ('2','1');
+insert into movieactor (intMovieID, intActorID) value ('2','2');
+insert into movieactor (intMovieID, intActorID) value ('3','3');
+insert into movieactor (intMovieID, intActorID) value ('3','4');
+insert into movieactor (intMovieID, intActorID) value ('3','5');
+insert into movieactor (intMovieID, intActorID) value ('4','3');
+insert into movieactor (intMovieID, intActorID) value ('4','4');
+insert into movieactor (intMovieID, intActorID) value ('4','5');
+insert into movieactor (intMovieID, intActorID) value ('5','6');
+insert into movieactor (intMovieID, intActorID) value ('5','7');
+insert into movieactor (intMovieID, intActorID) value ('6','6');
+insert into movieactor (intMovieID, intActorID) value ('6','7');
+insert into movieactor (intMovieID, intActorID) value ('7','8');
+insert into movieactor (intMovieID, intActorID) value ('8','8');
+insert into movieactor (intMovieID, intActorID) value ('9','8');
 
-insert into movieActor (intMovieID, intActorID) value ('10','8');
-insert into movieActor (intMovieID, intActorID) value ('11','8');
-insert into movieActor (intMovieID, intActorID) value ('12','8');
+insert into movieactor (intMovieID, intActorID) value ('10','8');
+insert into movieactor (intMovieID, intActorID) value ('11','8');
+insert into movieactor (intMovieID, intActorID) value ('12','8');
 
-insert into movieActor (intMovieID, intActorID) value ('13','9');
-insert into movieActor (intMovieID, intActorID) value ('14','9');
+insert into movieactor (intMovieID, intActorID) value ('13','9');
+insert into movieactor (intMovieID, intActorID) value ('14','9');
 
-insert into movieActor (intMovieID, intActorID) value ('15','9');
-insert into movieActor (intMovieID, intActorID) value ('16','10');
-insert into movieActor (intMovieID, intActorID) value ('17','11');
+insert into movieactor (intMovieID, intActorID) value ('15','9');
+insert into movieactor (intMovieID, intActorID) value ('16','10');
+insert into movieactor (intMovieID, intActorID) value ('17','11');
 
 
 -- TODAY = 2018-05-13
 -- 3. prepare data, insert fake log
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-11', '1','1','1');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-12', '2','2','2');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-07', '3','3','2');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID)
 value ('2018-05-06', '4','1','2');
 
-insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-11', 1, 1);
-insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-12', 2, 2);
+insert into isnotinstore (dteCreated, intMovieID, intrentallogID) value ('2018-05-11', 1, 1);
+insert into isnotinstore (dteCreated, intMovieID, intrentallogID) value ('2018-05-12', 2, 2);
 
-insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-07', 3, 3);
-insert into isNotInStore (dteCreated, intMovieID, intRentalLogID) value ('2018-05-06', 4, 4);
+insert into isnotinstore (dteCreated, intMovieID, intrentallogID) value ('2018-05-07', 3, 3);
+insert into isnotinstore (dteCreated, intMovieID, intrentallogID) value ('2018-05-06', 4, 4);
 
 -- 5. prepare data, insert fake log
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-01', '1','1','1','2018-04-05');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-02', '2','2','1','2018-04-06');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-03', '3','3','1','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-04', '4','4','1','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-05', '5','4','1','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-06', '6','5','1','2018-04-10');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-07', '1','1','1','2018-04-12');
 
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-01', '7','7','2','2018-04-05');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-02', '8','5','2','2018-04-06');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-03', '9','6','2','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-04', '10','4','2','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-05', '11','4','2','2018-04-09');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-06', '12','5','2','2018-04-10');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-07', '13','7','2','2018-04-12');
 
 
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-15', '1','1','1','2018-04-19');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-16', '2','2','1','2018-04-22');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-17', '3','3','1','2018-04-28');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-18', '4','4','1','2018-04-20');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-15', '5','4','1','2018-04-20');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-16', '6','5','1','2018-04-18');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-17', '1','1','1','2018-04-21');
 
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-15', '7','7','2','2018-04-19');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-16', '8','5','2','2018-04-19');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-17', '9','6','2','2018-04-19');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-15', '10','4','2','2018-04-18');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-16', '11','4','2','2018-04-20');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-17', '12','5','2','2018-04-20');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-18', '13','7','2','2018-04-22');
 
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-22', '14','5','2','2018-04-26');
-insert into rentalLog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
+insert into rentallog (dteCreated, intMovieID, intCustomerID, intStaffID, dteReturned)
 value ('2018-04-22', '15','7','2','2018-04-26');
 
--- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering 
+-- Fråga 10: Du ska underhålla en statistiktabell med hjälp av triggers. När du lämnar ut en fil ska det göras en notering
 -- om det i din statistiktabell. Du får inte lägga till informationen från din SP ovan, det ska skötas med triggers.
 
 DROP TRIGGER IF EXISTS tr_isnotinstoreBackUp;
 DELIMITER //
 CREATE TRIGGER tr_isnotinstoreBackUp
-AFTER DELETE ON isnotinstore 
+AFTER DELETE ON isnotinstore
 FOR EACH ROW
 BEGIN
-	INSERT INTO isNotInStoreBackUp (intBackUpID, dteCreated, intMovieID, intRentalLogID)
-    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intRentalLogID);
+	INSERT INTO isnotinstoreBackUp (intBackUpID, dteCreated, intMovieID, intrentallogID)
+    VALUES (OLD.intID, OLD.dteCreated, OLD.intMovieID, OLD.intrentallogID);
 END//
 DELIMITER ;
 
@@ -421,12 +421,12 @@ GROUP BY m.strGenre ORDER BY `NR OF MOVIES` DESC;
 -- 3. vilka filmer är uthyrda, vem som hyrde (kund) och vem som hyrde ut dom
 -- date = 2018-05-13
 
-DROP VIEW IF EXISTS view_rentalLog;
-CREATE VIEW view_rentalLog AS
+DROP VIEW IF EXISTS view_rentallog;
+CREATE VIEW view_rentallog AS
 SELECT m.intID AS `ID`, m.strName AS `MOVIE NAME`, c.strName AS CUSTOMER,
 s.strName AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
 DATE(rl.dteCreated) + INTERVAL 4 DAY AS `DATE OF RETURN`, DATE(rl.dteReturned) AS `RETURN DATE`
-FROM rentalLog rl
+FROM rentallog rl
 JOIN staff s ON rl.intStaffID = s.intID
 JOIN customers c ON rl.intCustomerID = c.intID
 JOIN movies m ON rl.intMovieID = m.intID
@@ -440,7 +440,7 @@ CREATE VIEW view_LateMovies AS
 SELECT m.intID AS `ID`, m.strName AS `MOVIE NAME`, c.strName AS CUSTOMER,
 s.strName AS STAFF,  DATE(rl.dteCreated) AS `HANDED OUT`,
 DATE_ADD(rl.dteCreated, INTERVAL 4 DAY) AS `DATE OF RETURN`, DATE(rl.dteReturned) AS `RETURNED`
-FROM rentalLog rl
+FROM rentallog rl
 JOIN staff s ON rl.intStaffID = s.intID
 JOIN customers c ON rl.intCustomerID = c.intID
 JOIN movies m ON rl.intMovieID = m.intID
@@ -459,12 +459,12 @@ ORDER BY `MOVIE PER STAFF MEMBER` DESC;
 -- Fråga 6: En lista med statistik över de mest uthyrda filmerna den senaste månaden. Se fråga 10.
 
 DROP VIEW IF EXISTS view_MostWantedMovies;
-CREATE VIEW view_MostWantedMovies AS 
+CREATE VIEW view_MostWantedMovies AS
 SELECT m.strName AS `MOVIE NAME`,
-(SELECT GROUP_CONCAT(DATE(rl.dteCreated)) FROM rentalLog rl
+(SELECT GROUP_CONCAT(DATE(rl.dteCreated)) FROM rentallog rl
 WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add('2018-05-13', INTERVAL -1 MONTH) AND '2018-05-13')
 ) AS `DATE OF RENTAL`,
-(SELECT COUNT(rl.intID)  FROM rentalLog rl
+(SELECT COUNT(rl.intID)  FROM rentallog rl
 WHERE rl.intMovieID = m.intID AND (rl.dteCreated BETWEEN date_add('2018-05-13', INTERVAL -1 MONTH) AND '2018-05-13')
 ) AS `MOST WANTED IN A MONTH`
 FROM rentallog rl
@@ -477,7 +477,7 @@ ORDER BY `MOST WANTED IN A MONTH` DESC;
 
 DROP PROCEDURE IF EXISTS sp_MarkMovieAsRented;
 DELIMITER //
-CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int, 
+CREATE PROCEDURE sp_MarkMovieAsRented(IN sp_MovieID int, IN sp_CustomerID int, IN sp_StaffID int,
 OUT out_Message varchar(100))
 BEGIN
 
@@ -491,11 +491,11 @@ BEGIN
 	set local_StaffID = sp_MovieID;
 
 	-- insert log file
-	INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID) 
+	INSERT INTO rentallog (dteCreated, intMovieID, intCustomerID, intStaffID)
 	VALUES (current_date(), local_MovieID, local_CustomerID, local_StaffID );
     SET local_lastID = (select intid from rentallog order by intID desc limit 1,1);
-	INSERT INTO isnotinstore (dteCreated, intMovieID, intRentalLogID) VALUES (current_date(), local_MovieID, local_lastID );
-       
+	INSERT INTO isnotinstore (dteCreated, intMovieID, intrentallogID) VALUES (current_date(), local_MovieID, local_lastID );
+
 	SET out_Message = "Thank you for choosing MAX Video Rental!";
 END //
 DELIMITER ;
@@ -507,23 +507,23 @@ DROP FUNCTION IF EXISTS func_isLateByDate;
 DELIMITER //
 CREATE FUNCTION func_isLateByDate ( f_movieID INT ) RETURNS int
 BEGIN
-	DECLARE local_intRentalLogID int DEFAULT 0;
+	DECLARE local_intrentallogID int DEFAULT 0;
 	DECLARE local_dteCreated date;
 	DECLARE valDateDiff int DEFAULT 0;
 	-- 0 is fine. all is good
     -- 1 is late, not fine. not good.
-    
+
     -- GET ID FOR LOG.
-	select intRentalLogID into local_intRentalLogID from isnotinstore where intMovieID = f_movieID;
-	IF local_intRentalLogID >= 1 THEN
-		select rl.dteCreated into local_dteCreated from rentallog rl where intID = local_intRentalLogID;
-        
+	select intrentallogID into local_intrentallogID from isnotinstore where intMovieID = f_movieID;
+	IF local_intrentallogID >= 1 THEN
+		select rl.dteCreated into local_dteCreated from rentallog rl where intID = local_intrentallogID;
+
         IF date_add(local_dteCreated, interval 4 day) > '2018-05-13' THEN
 			return 0;
 		ELSE
 			return 1;
 		END IF;
-	ELSE 
+	ELSE
 		-- no movie met the criteria
         return 2;
     END IF;
@@ -538,17 +538,17 @@ DELIMITER //
 CREATE PROCEDURE sp_ReturnMovie(IN intMovieID int, OUT strMessage varchar(200))
 BEGIN
 	DECLARE sp_intMovieID int default 0;
-	DECLARE sp_rentalLogID int default 0;
+	DECLARE sp_rentallogID int default 0;
 	DECLARE intIsMovieLate int default 0;
-    
+
     SET sp_intMovieID = intMovieID;
     SET intIsMovieLate = func_isLateByDate(sp_intMovieID);
-    
+
     IF intIsMovieLate <= 1 THEN
 		-- GET ID FOR LOG
-        SELECT i.intRentalLogID INTO sp_rentalLogID from isnotinstore i WHERE i.intMovieID = sp_intMovieID;
+        SELECT i.intrentallogID INTO sp_rentallogID from isnotinstore i WHERE i.intMovieID = sp_intMovieID;
         -- UPDATE LOG
-        UPDATE rentallog rl SET rl.dteReturned = '2018-05-13' WHERE rl.intID = sp_rentalLogID;
+        UPDATE rentallog rl SET rl.dteReturned = '2018-05-13' WHERE rl.intID = sp_rentallogID;
         -- DELETE IS NOT IN STORE
         DELETE FROM isnotinstore  WHERE isnotinstore.intMovieID = sp_intMovieID;
     END IF;
@@ -562,4 +562,3 @@ BEGIN
 	END IF;
 END//
 DELIMITER ;
-
